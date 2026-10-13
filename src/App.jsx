@@ -126,7 +126,7 @@ export default function App() {
       "https://www.youtube.com/embed/eCGEwzHVELA?enablejsapi=1&autoplay=1&loop=1&playlist=eCGEwzHVELA",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
-      "“With the blessings of Allah, we joyfully invite you to join us in celebrating the Nikah of our beloved children. Your presence, prayers, and blessings will make this special occasion even more meaningful to our families.”",
+      "“With the blessings of Allah, we joyfully invite you to join us in celebrating the Nikkah of our beloved children. Your presence, prayers, and blessings will make this special occasion even more meaningful to our families.”",
     introduction:
       "In sha Allah, to be solemnized in the gracious presence of family and loved ones.",
     countdownDescription:
@@ -134,7 +134,7 @@ export default function App() {
     events: [
       {
         id: "nikah",
-        title: "The Nikah Ceremony (Solemn Covenant)",
+        title: "The Nikkah Ceremony (Solemn Covenant)",
         dateTime: "Saturday, 26th December 2026 • 5:00 PM",
         time: "5:00 PM",
         details:
@@ -383,11 +383,11 @@ export default function App() {
     );
   };
 
-  // Add Nikah to Google Calendar (Saturday, 26 December 2026, 5:00 PM to 6:00 PM IST)
+  // Add Nikkah to Google Calendar (Saturday, 26 December 2026, 5:00 PM to 6:00 PM IST)
   const addNikahToCalendar = () => {
-    const title = encodeURIComponent("The Nikah Ceremony: Ajmal Ahamed R & Rifa J");
+    const title = encodeURIComponent("The Nikkah Ceremony: Ajmal Ahamed R & Rifa J");
     const details = encodeURIComponent(
-      "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santo Lawn, Pondicherry"
+      "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikkah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santo Lawn, Pondicherry"
     );
     const location = encodeURIComponent("Santo Lawn, Pondicherry");
     // 26 Dec 2026 17:00 to 18:00 IST (UTC+05:30 -> 11:30 to 12:30 UTC)
@@ -665,7 +665,7 @@ https://ajmalrifa-invitation.vercel.app/`;
         </motion.div>
       </section>
 
-      {/* SECTION 2: WEDDING INVITATION & NIKAH CEREMONY HERO */}
+      {/* SECTION 2: WEDDING INVITATION & NIKKAH CEREMONY HERO */}
       <section className="relative w-full py-20 md:py-32 px-6 md:px-12 bg-[#fcfbf9] z-20">
         <div className="max-w-6xl mx-auto">
           {/* Two-Column Grid directly on the clean page background */}
@@ -693,7 +693,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               </p>
             </motion.div>
 
-            {/* Right Side: Nikah Ceremony & Original Individual Name Cards */}
+            {/* Right Side: Nikkah Ceremony & Original Individual Name Cards */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -708,7 +708,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               </div>
 
               <h3 className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold leading-tight">
-                The Nikah Ceremony
+                The Nikkah Ceremony
               </h3>
 
               <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-2 font-['Playfair_Display',serif]">
@@ -866,7 +866,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             </motion.div>
           </div>
 
-          {/* Action Callout: Add Nikah to Google Calendar */}
+          {/* Action Callout: Add Nikkah to Google Calendar */}
           <div className="text-center mt-12">
             <motion.button
               whileHover={{ scale: 1.03 }}
@@ -877,16 +877,16 @@ https://ajmalrifa-invitation.vercel.app/`;
               <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
                 <Calendar size={13} />
               </div>
-              <span>Add Nikah to Google Calendar</span>
+              <span>Add Nikkah to Google Calendar</span>
             </motion.button>
           </div>
 
-          {/* Countdown to the Nikah - Classic Stationery Style */}
+          {/* Countdown to the Nikkah - Classic Stationery Style */}
           <div className="mt-20 pt-16 border-t border-[#2c3e38]/10 text-center">
             <div className="inline-flex items-center gap-3 mb-3">
               <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d8406b]" />
               <span className="text-[11px] uppercase tracking-[0.35em] font-bold text-[#d8406b]">
-                COUNTDOWN TO THE NIKAH
+                COUNTDOWN TO THE NIKKAH
               </span>
               <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d8406b]" />
             </div>
@@ -960,7 +960,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
                       {/* Event Title */}
                       <h3 className="text-2xl sm:text-3xl text-[#2c3e38] font-['Cormorant_Garamond',serif] font-bold tracking-tight">
-                        {isNikah ? "The Nikah Ceremony" : "The Reception"}
+                        {isNikah ? "The Nikkah Ceremony" : "The Reception"}
                       </h3>
 
                       {/* Ceremony Subtitle */}
