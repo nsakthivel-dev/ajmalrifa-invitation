@@ -23,10 +23,10 @@ function CalendarPageFlip({ value, label }) {
   const formatted = String(value).padStart(2, "0");
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="calendar-unit flex flex-col items-center">
       {/* Calendar Card Stack */}
       <div
-        className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center"
+        className="calendar-stack relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center"
         style={{ perspective: "800px" }}
       >
         {/* Layer 2: Deepest paper sheet in stack */}
@@ -71,7 +71,7 @@ function CalendarPageFlip({ value, label }) {
               <div className="absolute inset-1.5 rounded-xl border border-[#2c3e38]/5 pointer-events-none" />
 
               {/* Dead Center Large Serif Numeral */}
-              <span className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-bold font-['Playfair_Display',serif] tracking-tight tabular-nums select-none">
+              <span className="calendar-num text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-bold font-['Playfair_Display',serif] tracking-tight tabular-nums select-none">
                 {formatted}
               </span>
             </motion.div>
@@ -80,8 +80,8 @@ function CalendarPageFlip({ value, label }) {
       </div>
 
       {/* Unit Label Cleanly Positioned Below Card */}
-      <div className="mt-3 text-center">
-        <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#5a6b65] font-semibold block">
+      <div className="calendar-label-wrap mt-3 text-center">
+        <span className="calendar-label text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#5a6b65] font-semibold block">
           {label}
         </span>
       </div>
@@ -739,7 +739,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 3: EVENT DETAILS & COUNTDOWN */}
-      <section className="relative w-full py-24 md:py-32 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      <section className="section-event-countdown relative w-full py-24 md:py-32 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
@@ -764,7 +764,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="card-datetime group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -772,7 +772,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               <div className="space-y-6 relative z-10">
                 {/* Badge Header */}
-                <div className="flex items-center justify-between">
+                <div className="card-badge-header flex items-center justify-between">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
                     <Calendar size={14} />
                     <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
@@ -790,7 +790,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                   <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
                     Saturday
                   </span>
-                  <div className="text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
+                  <div className="card-date-title text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
                     26th December 2026
                   </div>
                 </div>
@@ -817,7 +817,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="card-venue group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -825,7 +825,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               <div className="space-y-6 relative z-10">
                 {/* Badge Header */}
-                <div className="flex items-center justify-between">
+                <div className="card-badge-header flex items-center justify-between">
                   <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
                     <MapPin size={14} />
                     <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
@@ -842,7 +842,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                   <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
                     Solemnization &amp; Feast
                   </span>
-                  <div className="text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
+                  <div className="card-venue-title text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
                     Santo Lawn
                   </div>
                 </div>
@@ -872,7 +872,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={addNikahToCalendar}
-              className="inline-flex items-center gap-3 px-10 py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
+              className="cal-btn-wrapper inline-flex items-center gap-3 px-10 py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
             >
               <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
                 <Calendar size={13} />
@@ -896,17 +896,17 @@ https://ajmalrifa-invitation.vercel.app/`;
             </p>
 
             {/* Calendar Page Shifting Suite */}
-            <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 max-w-lg sm:max-w-xl md:max-w-2xl mx-auto px-2">
+            <div className="countdown-suite flex items-center justify-center gap-2 sm:gap-4 md:gap-6 max-w-lg sm:max-w-xl md:max-w-2xl mx-auto px-2">
               <CalendarPageFlip value={countdown.days} label="Days" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="countdown-colon text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
                 :
               </div>
               <CalendarPageFlip value={countdown.hours} label="Hours" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="countdown-colon text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
                 :
               </div>
               <CalendarPageFlip value={countdown.minutes} label="Minutes" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="countdown-colon text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
                 :
               </div>
               <CalendarPageFlip value={countdown.seconds} label="Seconds" />

@@ -31,3 +31,124 @@ body {
   overflow-x: hidden;
   font-family: 'Playfair Display', serif !important;
 }
+
+/* ==========================================================================
+   MOBILE-ONLY RESPONSIVE FIXES (Strictly max-width: 767px)
+   Does not affect desktop/web UI in any way
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Section Spacing on Mobile */
+  .section-event-countdown {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-top: 4.5rem !important;
+    padding-bottom: 4.5rem !important;
+  }
+
+  /* Date & Time and Wedding Venue Cards */
+  .card-datetime,
+  .card-venue {
+    padding: 1.5rem !important;
+    border-radius: 1.5rem !important;
+  }
+
+  /* Prevent badge overlap by naturally wrapping / stacking */
+  .card-badge-header {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.625rem !important;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+  }
+
+  /* Natural text wrapping without clipping or overflow */
+  .card-date-title,
+  .card-venue-title {
+    font-size: 1.65rem !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+  }
+
+  /* Calendar Button Mobile Optimization */
+  .cal-btn-wrapper {
+    max-width: 100% !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    font-size: 11px !important;
+    letter-spacing: 0.15em !important;
+  }
+
+  /* Countdown Suite: Fit all 4 boxes completely within mobile viewport */
+  .countdown-suite {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    max-width: 100% !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .calendar-unit {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+  }
+
+  .calendar-stack {
+    width: 62px !important;
+    height: 62px !important;
+    max-width: 62px !important;
+    max-height: 62px !important;
+  }
+
+  .calendar-num {
+    font-size: 1.35rem !important;
+    line-height: 1 !important;
+  }
+
+  .calendar-label-wrap {
+    margin-top: 6px !important;
+  }
+
+  .calendar-label {
+    font-size: 9px !important;
+    letter-spacing: 0.15em !important;
+  }
+
+  .countdown-colon {
+    font-size: 1.15rem !important;
+    margin-top: -16px !important;
+    line-height: 1 !important;
+  }
+}
+
+/* Ultra-narrow mobile screens (<= 360px) */
+@media (max-width: 360px) {
+  .countdown-suite {
+    gap: 4px !important;
+  }
+
+  .calendar-stack {
+    width: 52px !important;
+    height: 52px !important;
+    max-width: 52px !important;
+    max-height: 52px !important;
+  }
+
+  .calendar-num {
+    font-size: 1.15rem !important;
+  }
+
+  .calendar-label {
+    font-size: 8px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .countdown-colon {
+    font-size: 1rem !important;
+    margin-top: -14px !important;
+  }
+}
+
