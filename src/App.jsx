@@ -711,7 +711,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 The Nikah Ceremony
               </h3>
 
-              <p className="text-[#5a6b65] font-light text-base sm:text-lg leading-relaxed italic font-['Playfair_Display',serif]">
+              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-2 font-['Playfair_Display',serif]">
                 In sha Allah, to be solemnized in the gracious presence of family and loved ones
               </p>
 
