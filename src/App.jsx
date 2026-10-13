@@ -134,11 +134,11 @@ export default function App() {
     events: [
       {
         id: "nikah",
-        title: "The Nikah Ceremony (Sacred Covenant)",
+        title: "The Nikah Ceremony (Solemn Covenant)",
         dateTime: "Saturday, 26th December 2026 • 5:00 PM",
         time: "5:00 PM",
         details:
-          "The sacred marriage contract solemnized with prayers and duas for a blessed union."
+          "The holy marriage contract solemnized with prayers and duas for a blessed union."
       },
       {
         id: "reception",
@@ -146,7 +146,7 @@ export default function App() {
         dateTime: "Saturday, 26th December 2026 • 6:30 PM",
         time: "6:30 PM",
         details:
-          "A celebratory feast to felicitate the newlyweds and share joyful moments with family and friends."
+          "A celebratory feast to felicitate the newlyweds and share delightful moments with family and friends."
       }
     ],
     duaArabic: "بَارَكَ اللَّهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
@@ -702,7 +702,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               className="col-span-1 lg:col-span-6 flex flex-col space-y-6 text-center lg:text-left"
             >
               <div>
-                <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b]">
+                <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                   AUSPICIOUS OCCASION
                 </span>
               </div>
@@ -754,7 +754,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               A Day to Remember
             </h2>
             <p className="text-[#5a6b65] font-light text-base md:text-lg italic mt-3 max-w-xl mx-auto font-['Playfair_Display',serif]">
-              Join us as we celebrate a sacred union blessed by Allah, surrounded by love, prayers, and the warmth of our families.
+              Join us as we celebrate a cherished union blessed by Allah, surrounded by love, prayers, and the warmth of our families.
             </p>
           </div>
 
@@ -933,7 +933,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             </h2>
 
             <p className="text-[#5a6b65] font-light italic text-base sm:text-lg max-w-lg mx-auto font-['Cormorant_Garamond',serif]">
-              With the blessings of Almighty Allah, we joyfully invite you to celebrate these sacred moments with our families.
+              By the grace of Almighty Allah, we warmly invite you to celebrate these cherished moments with our families.
             </p>
           </div>
 
@@ -965,7 +965,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
                       {/* Ceremony Subtitle */}
                       <p className="text-xs uppercase tracking-[0.2em] text-[#d8406b] font-medium">
-                        {isNikah ? "Sacred Nuptial Covenant" : "Celebration Feast & Felicitation"}
+                        {isNikah ? "Blessed Nuptial Covenant" : "Celebration Feast & Felicitation"}
                       </p>
 
                       {/* Traditional Gold Filigree Divider */}
@@ -1063,7 +1063,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               {/* Traditional Welcome Wording */}
               <p className="text-xs sm:text-sm text-[#5a6b65] font-light italic leading-relaxed pt-1 font-['Playfair_Display',serif]">
-                We joyfully look forward to welcoming you and your family to celebrate the wedding ceremony and evening feast amidst the open-air lawns under the starlit skies.
+                We warmly look forward to welcoming you and your family to celebrate the wedding ceremony and evening feast amidst the open-air lawns under the starlit skies.
               </p>
 
               {/* Action Buttons */}
@@ -1193,7 +1193,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       {/* FOOTER */}
       <footer className="py-12 bg-[#fcfbf9] text-center border-t border-[#2c3e38]/5">
         <p className="text-[#5a6b65] text-xs font-medium tracking-[0.3em] uppercase">
-          A Sacred Journey of Love &amp; Duas
+          A Blessed Journey of Love &amp; Duas
         </p>
         <p className="text-[#2c3e38]/60 text-sm mt-2 font-['Playfair_Display',serif]">
           {weddingData.names} • 2026
