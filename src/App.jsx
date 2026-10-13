@@ -414,7 +414,15 @@ export default function App() {
 
   // WhatsApp Share with prefilled details
   const handleWhatsAppShare = () => {
-    const text = `*Wedding Invitation*\n\nWith the blessings of Allah, we joyfully invite you to join us in celebrating the Nikah of our beloved children *Ajmal Ahamed R & Rifa J*.\n\n✨ *Event:* The Nikah Ceremony\n📅 *Date:* Saturday, 26th December 2026\n🌙 *Islamic Date:* 17 Rajab 1448 AH\n⏰ *Time:* 5:00 PM\n📍 *Venue:* Santo Lawn, Pondicherry\n\nView our wedding invitation card here:\n${window.location.href}`;
+    const text = `With hearts full of happiness 💕,
+
+We invite you to join us as we begin a beautiful new chapter of our lives. Your presence, prayers, and blessings would make our special day even more memorable. ✨
+
+With love ❤️,
+*Ajmal Ahamed R & Rifa J*
+
+💌 Our Wedding Invitation:
+https://ajmalrifa-invitation.vercel.app/`;
     window.open(
       `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
       "_blank"
@@ -423,12 +431,13 @@ export default function App() {
 
   // Copy Link to Clipboard
   const handleCopyLink = async () => {
+    const link = "https://ajmalrifa-invitation.vercel.app/";
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(window.location.href);
+        await navigator.clipboard.writeText(link);
       } else {
         const textArea = document.createElement("textarea");
-        textArea.value = window.location.href;
+        textArea.value = link;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand("copy");
@@ -436,7 +445,7 @@ export default function App() {
       }
       showToast("Invitation link copied to clipboard!");
     } catch (err) {
-      showToast("Link: " + window.location.href);
+      showToast("Link: " + link);
     }
   };
 
