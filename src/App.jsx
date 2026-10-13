@@ -9,12 +9,8 @@ import {
   ChevronDown,
   Check,
   Send,
-  Share2,
-  ExternalLink,
   Sparkles,
   Clock,
-  Pause,
-  Play,
   Copy,
   MessageCircle,
   Compass,
@@ -102,6 +98,7 @@ export default function App() {
   // State
   const [hasOpened, setHasOpened] = useState(() => isPreview);
   const [flowState, setFlowState] = useState(() => (isPreview ? "completed" : "envelope"));
+  const [showEnvelopeBorder, setShowEnvelopeBorder] = useState(() => !isPreview);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [isAutoScrolling, setIsAutoScrolling] = useState(shouldAutoScroll);
   const [autoScrollSpeed, setAutoScrollSpeed] = useState(1.5);
@@ -217,6 +214,7 @@ export default function App() {
 
   // Handle Transition to Main Website once Video Ends
   const handleVideoEnded = useCallback(() => {
+    setShowEnvelopeBorder(false);
     if (videoEndTimerRef.current) {
       clearTimeout(videoEndTimerRef.current);
       videoEndTimerRef.current = null;
@@ -271,10 +269,34 @@ export default function App() {
 
   // Monitor playback time to end cleanly right after card is fully open (before whiteout glare)
   const handleVideoTimeUpdate = () => {
-    if (flowState === "video" && videoRef.current && videoRef.current.currentTime >= 4.45) {
-      handleVideoEnded();
+    if (flowState === "video" && videoRef.current) {
+      if (videoRef.current.currentTime >= 0.42) {
+        setShowEnvelopeBorder(false);
+      }
+      if (videoRef.current.currentTime >= 4.45) {
+        handleVideoEnded();
+      }
     }
   };
+
+  // Frame-accurate synchronization: fade out border precisely when seal breaks (~0.42s) in bgenv.webm
+  useEffect(() => {
+    if (flowState !== "video" || !showEnvelopeBorder) return;
+
+    let animId;
+    const checkTime = () => {
+      if (videoRef.current && videoRef.current.currentTime >= 0.42) {
+        setShowEnvelopeBorder(false);
+        return;
+      }
+      animId = requestAnimationFrame(checkTime);
+    };
+
+    animId = requestAnimationFrame(checkTime);
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, [flowState, showEnvelopeBorder]);
 
   // Pre-seek to start once metadata is loaded
   const handleVideoLoadedMetadata = () => {
@@ -438,23 +460,7 @@ export default function App() {
     }
   };
 
-  // Native or fallback share
-  const handleShare = async () => {
-    const shareData = {
-      title: `${weddingData.names} — Wedding Invitation`,
-      text: `With the blessings of Allah, we joyfully invite you to celebrate the Nikah of ${weddingData.names} on Saturday, 26th December 2026 at Santo Lawn, Pondicherry.`,
-      url: window.location.href
-    };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.log("Share cancelled or failed", err);
-      }
-    } else {
-      handleCopyLink();
-    }
-  };
+
 
 
   return (
@@ -526,11 +532,13 @@ export default function App() {
                 className="relative w-full aspect-video flex items-center justify-center"
                 style={{ aspectRatio: "16 / 9" }}
               >
-                {/* Antique Gold Vintage Corner Flourishes (Frames both Envelope & Video) */}
+                {/* Antique Gold Vintage Corner Flourishes (Frames Envelope initially, fades out naturally as seal breaks) */}
                 <img
                   src="/envelope_decor.png"
                   alt="Vintage Corner Flourishes"
-                  className="absolute inset-0 w-full h-full object-contain pointer-events-none z-30 transition-opacity duration-500 opacity-100"
+                  className={`absolute inset-0 w-full h-full object-contain pointer-events-none z-30 transition-opacity duration-500 ease-out ${
+                    showEnvelopeBorder ? "opacity-100" : "opacity-0"
+                  }`}
                 />
 
                 {/* 1. Envelope Layer (In-flow image anchors container height) */}
@@ -577,13 +585,7 @@ export default function App() {
                       flowState === "video" ? "pointer-events-auto" : "pointer-events-none"
                     }`}
                   />
-                  {/* Discreet Skip Option */}
-                  <button
-                    onClick={handleVideoEnded}
-                    className="absolute bottom-4 right-4 z-30 px-4 py-2 rounded-full bg-white/90 hover:bg-white text-[#2c3e38] text-[11px] uppercase tracking-[0.2em] font-bold border border-[#2c3e38]/15 shadow-lg transition-all cursor-pointer opacity-80 hover:opacity-100"
-                  >
-                    Skip Intro
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -800,13 +802,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Bottom Subtle Bar */}
-              <div className="mt-8 pt-4 border-t border-[#2c3e38]/5 flex items-center justify-between text-xs text-[#5a6b65]">
-                <span className="italic">Asia / Kolkata Time</span>
-                <span className="text-[#d8406b] font-medium tracking-wider text-[11px] uppercase">
-                  Evening Ceremony
-                </span>
-              </div>
             </motion.div>
 
             {/* Card 2: Sacred Venue */}
@@ -859,16 +854,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Get Directions Action inside Card */}
-              <div className="mt-8 pt-4 border-t border-[#2c3e38]/5 flex items-center justify-between">
-                <span className="text-xs text-[#5a6b65] italic">East Coast Road</span>
-                <button
-                  onClick={openMapsDirections}
-                  className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.15em] font-bold text-[#d8406b] hover:text-[#b03054] transition-colors cursor-pointer"
-                >
-                  <ExternalLink size={12} /> View Directions
-                </button>
-              </div>
             </motion.div>
           </div>
 
@@ -977,7 +962,7 @@ export default function App() {
                       {/* Traditional Gold Filigree Divider */}
                       <div className="py-2 flex items-center justify-center gap-3">
                         <span className="h-px w-10 bg-[#c5a059]/30" />
-                        <span className="text-[#c5a059] text-xs">❦</span>
+                        <Heart className="w-4 h-4 text-[#d8406b] fill-[#d8406b]" />
                         <span className="h-px w-10 bg-[#c5a059]/30" />
                       </div>
 
@@ -1058,7 +1043,7 @@ export default function App() {
               {/* Traditional Gold Filigree Divider */}
               <div className="py-2 flex items-center justify-center gap-3">
                 <span className="h-px w-12 bg-[#c5a059]/30" />
-                <span className="text-[#c5a059] text-xs">❦</span>
+                <Heart className="w-4 h-4 text-[#d8406b] fill-[#d8406b]" />
                 <span className="h-px w-12 bg-[#c5a059]/30" />
               </div>
 
@@ -1206,45 +1191,7 @@ export default function App() {
         </p>
       </footer>
 
-      {/* Floating Bottom Action Bar (Autoscroll, Calendar, Share) */}
-      {hasOpened && (
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#2c3e38]/95 backdrop-blur-md text-[#FAF9F6] border border-[#d1c8b8]/30 rounded-full px-5 py-2.5 shadow-2xl flex items-center gap-3.5 z-40"
-        >
-          {/* Autoscroll Toggle */}
-          <button
-            onClick={() => setIsAutoScrolling(!isAutoScrolling)}
-            className="flex items-center gap-1.5 bg-[#d8406b] text-white px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-[#b03054] transition-colors cursor-pointer"
-          >
-            {isAutoScrolling ? <Pause size={12} /> : <Play size={12} />}
-            <span className="hidden sm:inline">{isAutoScrolling ? "Pause" : "Scroll"}</span>
-          </button>
 
-          <div className="h-4 w-px bg-white/20" />
-
-          {/* Add to Calendar */}
-          <button
-            onClick={addNikahToCalendar}
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white/80 hover:text-white transition-colors cursor-pointer"
-          >
-            <Calendar size={13} />
-            <span className="hidden sm:inline">Save Date</span>
-          </button>
-
-          <div className="h-4 w-px bg-white/20" />
-
-          {/* Share */}
-          <button
-            onClick={handleShare}
-            className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white/80 hover:text-[#d8406b] transition-colors cursor-pointer"
-          >
-            <Share2 size={13} />
-            <span className="hidden sm:inline">Share</span>
-          </button>
-        </motion.div>
-      )}
 
       {/* Toast Notification */}
       <AnimatePresence>
