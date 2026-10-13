@@ -26,16 +26,16 @@ function CalendarPageFlip({ value, label }) {
     <div className="flex flex-col items-center">
       {/* Calendar Card Stack */}
       <div
-        className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center"
+        className="relative w-14 h-14 min-[380px]:w-16 min-[380px]:h-16 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center shrink-0"
         style={{ perspective: "800px" }}
       >
         {/* Layer 2: Deepest paper sheet in stack */}
-        <div className="absolute inset-x-2 -bottom-2 h-full bg-[#ede7dc] rounded-2xl border border-[#2c3e38]/10 shadow-sm pointer-events-none" />
+        <div className="absolute inset-x-1 sm:inset-x-2 -bottom-1 sm:-bottom-2 h-full bg-[#ede7dc] rounded-xl sm:rounded-2xl border border-[#2c3e38]/10 shadow-sm pointer-events-none" />
         {/* Layer 1: Middle paper sheet in stack */}
-        <div className="absolute inset-x-1 -bottom-1 h-full bg-[#f7f3eb] rounded-2xl border border-[#2c3e38]/15 shadow-sm pointer-events-none" />
+        <div className="absolute inset-x-0.5 sm:inset-x-1 -bottom-0.5 sm:-bottom-1 h-full bg-[#f7f3eb] rounded-xl sm:rounded-2xl border border-[#2c3e38]/15 shadow-sm pointer-events-none" />
 
         {/* Shifting Paper Page (Emerging from Back to Front) */}
-        <div className="relative w-full h-full overflow-hidden rounded-2xl shadow-md border border-[#2c3e38]/15 bg-white">
+        <div className="relative w-full h-full overflow-hidden rounded-xl sm:rounded-2xl shadow-md border border-[#2c3e38]/15 bg-white">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={formatted}
@@ -65,13 +65,13 @@ function CalendarPageFlip({ value, label }) {
                   ease: "easeIn",
                 },
               }}
-              className="absolute inset-0 w-full h-full bg-gradient-to-b from-white via-[#fdfcf9] to-[#f9f6f0] flex items-center justify-center rounded-2xl"
+              className="absolute inset-0 w-full h-full bg-gradient-to-b from-white via-[#fdfcf9] to-[#f9f6f0] flex items-center justify-center rounded-xl sm:rounded-2xl"
             >
               {/* Subtle inner inset border */}
-              <div className="absolute inset-1.5 rounded-xl border border-[#2c3e38]/5 pointer-events-none" />
+              <div className="absolute inset-1 sm:inset-1.5 rounded-lg sm:rounded-xl border border-[#2c3e38]/5 pointer-events-none" />
 
               {/* Dead Center Large Serif Numeral */}
-              <span className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-bold font-['Playfair_Display',serif] tracking-tight tabular-nums select-none">
+              <span className="text-xl min-[380px]:text-2xl sm:text-4xl md:text-5xl text-[#2c3e38] font-bold font-['Playfair_Display',serif] tracking-tight tabular-nums select-none">
                 {formatted}
               </span>
             </motion.div>
@@ -80,8 +80,8 @@ function CalendarPageFlip({ value, label }) {
       </div>
 
       {/* Unit Label Cleanly Positioned Below Card */}
-      <div className="mt-3 text-center">
-        <span className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-[#5a6b65] font-semibold block">
+      <div className="mt-2 sm:mt-3 text-center">
+        <span className="text-[9px] min-[380px]:text-[10px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.25em] text-[#5a6b65] font-semibold block">
           {label}
         </span>
       </div>
@@ -730,10 +730,10 @@ export default function App() {
       </section>
 
       {/* SECTION 3: EVENT DETAILS & COUNTDOWN */}
-      <section className="relative w-full py-24 md:py-32 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      <section className="relative w-full py-16 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 bg-white border-t border-[#2c3e38]/5 overflow-hidden">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 sm:mb-16">
             <div className="inline-flex items-center gap-3 mb-3">
               <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d8406b]" />
               <span className="text-[11px] uppercase tracking-[0.35em] font-bold text-[#d8406b]">
@@ -741,21 +741,21 @@ export default function App() {
               </span>
               <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d8406b]" />
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] tracking-tight font-bold">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] tracking-tight font-bold">
               A Day to Remember
             </h2>
-            <p className="text-[#5a6b65] font-light text-base md:text-lg italic mt-3 max-w-xl mx-auto font-['Playfair_Display',serif]">
+            <p className="text-[#5a6b65] font-light text-sm sm:text-base md:text-lg italic mt-3 max-w-xl mx-auto font-['Playfair_Display',serif]">
               Join us as we celebrate a sacred union blessed by Allah, surrounded by love, prayers, and the warmth of our families.
             </p>
           </div>
 
           {/* Trendy Dual Luxury Event Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-stretch">
             {/* Card 1: Sacred Date & Time */}
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-6 sm:p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -763,15 +763,15 @@ export default function App() {
 
               <div className="space-y-6 relative z-10">
                 {/* Badge Header */}
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
-                    <Calendar size={14} />
-                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
+                <div className="flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b] shrink-0">
+                    <Calendar size={14} className="shrink-0" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] font-bold whitespace-nowrap">
                       Date &amp; Time
                     </span>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2c3e38]/5 text-[#2c3e38] text-[11px] font-medium font-['Playfair_Display',serif]">
-                    <Sparkles size={11} className="text-[#d8406b]" />
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2c3e38]/5 text-[#2c3e38] text-[11px] font-medium font-['Playfair_Display',serif] whitespace-nowrap shrink-0">
+                    <Sparkles size={11} className="text-[#d8406b] shrink-0" />
                     {weddingData.islamicDate}
                   </span>
                 </div>
@@ -781,21 +781,21 @@ export default function App() {
                   <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
                     Saturday
                   </span>
-                  <div className="text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
+                  <div className="text-2xl min-[380px]:text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
                     26th December 2026
                   </div>
                 </div>
 
                 {/* Time Highlight with Icon */}
                 <div className="flex items-center gap-3 pt-4 border-t border-[#2c3e38]/10">
-                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm shrink-0">
                     <Clock size={16} />
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.2em] text-[#5a6b65] font-semibold block">
                       Auspicious Time
                     </span>
-                    <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
+                    <span className="text-base sm:text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
                       5:00 PM Onwards
                     </span>
                   </div>
@@ -808,7 +808,7 @@ export default function App() {
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-6 sm:p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -816,14 +816,14 @@ export default function App() {
 
               <div className="space-y-6 relative z-10">
                 {/* Badge Header */}
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
-                    <MapPin size={14} />
-                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
+                <div className="flex flex-wrap items-center justify-between gap-2.5">
+                  <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b] shrink-0">
+                    <MapPin size={14} className="shrink-0" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] font-bold whitespace-nowrap">
                       Wedding Venue
                     </span>
                   </div>
-                  <span className="text-xs text-[#5a6b65] tracking-widest uppercase font-medium">
+                  <span className="text-xs text-[#5a6b65] tracking-widest uppercase font-medium whitespace-nowrap">
                     Celebration Site
                   </span>
                 </div>
@@ -833,21 +833,21 @@ export default function App() {
                   <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
                     Solemnization &amp; Feast
                   </span>
-                  <div className="text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
+                  <div className="text-2xl min-[380px]:text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
                     Santo Lawn
                   </div>
                 </div>
 
                 {/* City & Address */}
                 <div className="flex items-center gap-3 pt-4 border-t border-[#2c3e38]/10">
-                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm">
+                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm shrink-0">
                     <MapPin size={16} />
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.2em] text-[#5a6b65] font-semibold block">
                       Destination
                     </span>
-                    <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
+                    <span className="text-base sm:text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
                       Pondicherry
                     </span>
                   </div>
@@ -858,14 +858,14 @@ export default function App() {
           </div>
 
           {/* Action Callout: Add Nikah to Google Calendar */}
-          <div className="text-center mt-12">
+          <div className="text-center mt-10 sm:mt-12">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={addNikahToCalendar}
-              className="inline-flex items-center gap-3 px-10 py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
+              className="inline-flex items-center justify-center gap-2.5 sm:gap-3 px-6 sm:px-10 py-3.5 sm:py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-[11px] sm:text-xs uppercase tracking-[0.15em] sm:tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group max-w-full"
             >
-              <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
+              <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform shrink-0">
                 <Calendar size={13} />
               </div>
               <span>Add Nikah to Google Calendar</span>
@@ -873,7 +873,7 @@ export default function App() {
           </div>
 
           {/* Countdown to the Nikah - Classic Stationery Style */}
-          <div className="mt-20 pt-16 border-t border-[#2c3e38]/10 text-center">
+          <div className="mt-16 sm:mt-20 pt-12 sm:pt-16 border-t border-[#2c3e38]/10 text-center">
             <div className="inline-flex items-center gap-3 mb-3">
               <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d8406b]" />
               <span className="text-[11px] uppercase tracking-[0.35em] font-bold text-[#d8406b]">
@@ -882,22 +882,22 @@ export default function App() {
               <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d8406b]" />
             </div>
 
-            <p className="text-[#5a6b65] font-light max-w-md mx-auto text-sm md:text-base mb-10 font-['Playfair_Display',serif] italic">
+            <p className="text-[#5a6b65] font-light max-w-md mx-auto text-sm md:text-base mb-8 sm:mb-10 font-['Playfair_Display',serif] italic px-2">
               {weddingData.countdownDescription}
             </p>
 
             {/* Calendar Page Shifting Suite */}
-            <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 max-w-lg sm:max-w-xl md:max-w-2xl mx-auto px-2">
+            <div className="flex items-center justify-center gap-1.5 min-[380px]:gap-2 sm:gap-4 md:gap-6 max-w-full mx-auto px-1 sm:px-2">
               <CalendarPageFlip value={countdown.days} label="Days" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="text-base sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-4 sm:-mt-8 select-none shrink-0">
                 :
               </div>
               <CalendarPageFlip value={countdown.hours} label="Hours" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="text-base sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-4 sm:-mt-8 select-none shrink-0">
                 :
               </div>
               <CalendarPageFlip value={countdown.minutes} label="Minutes" />
-              <div className="text-xl sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-6 sm:-mt-8 select-none">
+              <div className="text-base sm:text-3xl text-[#2c3e38]/25 font-serif font-light self-center -mt-4 sm:-mt-8 select-none shrink-0">
                 :
               </div>
               <CalendarPageFlip value={countdown.seconds} label="Seconds" />
