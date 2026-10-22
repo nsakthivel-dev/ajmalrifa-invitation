@@ -433,25 +433,14 @@ https://ajmalrifa-invitation.vercel.app/`;
             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
             className="flex flex-col items-center text-center"
           >
-            {/* 1. بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ */}
-            <div className="w-full mb-3 text-center">
-              <span
-                dir="rtl"
-                lang="ar"
-                className="text-[#2c3e38] text-lg sm:text-xl md:text-2xl tracking-[0.2em] font-medium inline-block text-center opacity-90"
-              >
-                بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
-              </span>
-            </div>
-
-            {/* 2. Nikkah of */}
-            <div className="w-full flex flex-col items-center mt-1 mb-2 text-center">
-              <span className="font-['Playfair_Display',serif] text-[#d8406b] text-xl md:text-3xl font-bold text-center">
+            {/* Nikkah of */}
+            <div className="w-full flex flex-col items-center mb-2 text-center">
+              <span className="font-['Playfair_Display',serif] text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-[#d8406b] font-bold text-center">
                 Nikkah of
               </span>
             </div>
 
-            {/* 3. Ajmal Ahamed & Rifa */}
+            {/* Ajmal Ahamed & Rifa */}
             <h1 className="font-['Playfair_Display',serif] text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-[#2c3e38] text-center drop-shadow-sm">
               Ajmal Ahamed &amp; Rifa
             </h1>
@@ -549,12 +538,10 @@ https://ajmalrifa-invitation.vercel.app/`;
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-3 mb-3">
-              <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d8406b]" />
-              <span className="text-[11px] uppercase tracking-[0.35em] font-bold text-[#d8406b]">
+            <div className="mb-3">
+              <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 OUR BLESSED BEGINNING
               </span>
-              <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d8406b]" />
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] tracking-tight font-bold">
               A Day to Remember
@@ -611,7 +598,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                       Propitious Time
                     </span>
                     <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
-                      5:00 PM Onwards
+                      5:00 PM
                     </span>
                   </div>
                 </div>
@@ -689,12 +676,10 @@ https://ajmalrifa-invitation.vercel.app/`;
 
           {/* Countdown to the Nikkah - Classic Stationery Style */}
           <div className="mt-20 pt-16 border-t border-[#2c3e38]/10 text-center">
-            <div className="inline-flex items-center gap-3 mb-3">
-              <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#d8406b]" />
-              <span className="text-[11px] uppercase tracking-[0.35em] font-bold text-[#d8406b]">
+            <div className="mb-3">
+              <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 COUNTDOWN TO THE NIKKAH
               </span>
-              <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#d8406b]" />
             </div>
 
             <p className="text-[#5a6b65] font-light max-w-md mx-auto text-sm md:text-base mb-10 font-['Playfair_Display',serif] italic">
@@ -726,12 +711,10 @@ https://ajmalrifa-invitation.vercel.app/`;
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="text-center mb-14 md:mb-18 space-y-2">
-            <div className="flex items-center justify-center gap-3 mb-2">
-              <span className="h-px w-10 sm:w-16 bg-[#c5a059]/40" />
-              <span className="text-[11px] uppercase tracking-[0.35em] font-medium text-[#8c6b2d] font-sans">
+            <div className="mb-3">
+              <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 PROGRAMME OF CELEBRATIONS
               </span>
-              <span className="h-px w-10 sm:w-16 bg-[#c5a059]/40" />
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-['Cormorant_Garamond',serif] font-bold tracking-tight">
@@ -782,7 +765,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                           Saturday, 26th December 2026
                         </p>
                         <p className="text-xs text-[#8c6b2d] uppercase tracking-[0.18em] font-sans font-medium">
-                          {event.time} {isNikah && "• 17 Rajab 1448 AH"}
+                          {event.time} {isNikah ? "• 17 Rajab 1448 AH" : "Onward"}
                         </p>
                       </div>
 
@@ -827,12 +810,10 @@ https://ajmalrifa-invitation.vercel.app/`;
             {/* Venue Header & Details */}
             <div className="text-center relative z-10 space-y-3 max-w-2xl mx-auto">
               {/* Header Kicker */}
-              <div className="flex items-center justify-center gap-3 mb-1">
-                <span className="h-px w-10 sm:w-16 bg-[#c5a059]/40" />
-                <span className="text-[11px] uppercase tracking-[0.35em] font-medium text-[#8c6b2d] font-sans">
+              <div className="mb-3">
+                <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                   CELEBRATION VENUE
                 </span>
-                <span className="h-px w-10 sm:w-16 bg-[#c5a059]/40" />
               </div>
 
               {/* Main Heading */}
