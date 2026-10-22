@@ -769,11 +769,6 @@ https://ajmalrifa-invitation.vercel.app/`;
                         {isNikah ? "The Nikkah Ceremony" : "The Reception"}
                       </h3>
 
-                      {/* Ceremony Subtitle */}
-                      <p className="text-xs uppercase tracking-[0.2em] text-[#d8406b] font-medium">
-                        {isNikah ? "Blessed Nuptial Covenant" : "Celebration Feast & Felicitation"}
-                      </p>
-
                       {/* Traditional Gold Filigree Divider */}
                       <div className="py-2 flex items-center justify-center gap-3">
                         <span className="h-px w-10 bg-[#c5a059]/30" />
@@ -787,7 +782,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                           Saturday, 26th December 2026
                         </p>
                         <p className="text-xs text-[#8c6b2d] uppercase tracking-[0.18em] font-sans font-medium">
-                          {event.time} Onwards {isNikah && "• 17 Rajab 1448 AH"}
+                          {event.time} {isNikah && "• 17 Rajab 1448 AH"}
                         </p>
                       </div>
 
