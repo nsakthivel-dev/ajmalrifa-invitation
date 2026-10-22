@@ -4,18 +4,13 @@ import {
   Calendar,
   MapPin,
   Heart,
-  Volume2,
   VolumeX,
   ChevronDown,
-  Check,
-  Send,
   Sparkles,
   Clock,
   Copy,
   MessageCircle,
-  Compass,
   Navigation,
-  Car,
 } from "lucide-react";
 
 // Calendar Page Unit with realistic back-to-front shift animation & centered numbers
@@ -92,20 +87,13 @@ function CalendarPageFlip({ value, label }) {
 export default function App() {
   // Query params
   const [params] = useState(() => new URLSearchParams(window.location.search));
-  const isPreview = params.get("preview") === "true";
   const shouldAutoScroll = params.get("autoscroll") === "true";
 
   // State
-  const [hasOpened, setHasOpened] = useState(() => isPreview);
-  const [flowState, setFlowState] = useState(() => (isPreview ? "completed" : "envelope"));
-  const [showEnvelopeBorder, setShowEnvelopeBorder] = useState(() => !isPreview);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [isAutoScrolling, setIsAutoScrolling] = useState(shouldAutoScroll);
-  const [autoScrollSpeed, setAutoScrollSpeed] = useState(1.5);
+  const [autoScrollSpeed] = useState(1.5);
   const [toastMessage, setToastMessage] = useState(null);
-  const videoRef = useRef(null);
-  const videoEndTimerRef = useRef(null);
-  const isVideoStartedRef = useRef(false);
 
   // Wedding data
   const weddingData = {
@@ -126,7 +114,7 @@ export default function App() {
       "https://www.youtube.com/embed/eCGEwzHVELA?enablejsapi=1&autoplay=1&loop=1&playlist=eCGEwzHVELA",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
-      "“With the blessings of Allah, we joyfully invite you to join us in celebrating the Nikkah of our beloved children. Your presence, prayers, and blessings will make this special occasion even more meaningful to our families.”",
+      "“We cordially invite you to join us in celebrating the Nikkah of our beloved children. Your gracious presence, heartfelt duas, and blessings will make this blessed occasion even more meaningful and memorable for both our families.”",
     introduction:
       "In sha Allah, to be solemnized in the gracious presence of family and loved ones.",
     countdownDescription:
@@ -212,106 +200,9 @@ export default function App() {
     }
   };
 
-  // Handle Transition to Main Website once Video Ends
-  const handleVideoEnded = useCallback(() => {
-    setShowEnvelopeBorder(false);
-    if (videoEndTimerRef.current) {
-      clearTimeout(videoEndTimerRef.current);
-      videoEndTimerRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.pause();
-      try {
-        videoRef.current.currentTime = 0;
-      } catch (err) {
-        console.warn("Error resetting currentTime:", err);
-      }
-    }
-    isVideoStartedRef.current = false;
-    setFlowState("completed");
-    setHasOpened(true);
-    playAudio();
-    if (shouldAutoScroll) {
-      setIsAutoScrolling(true);
-    }
-  }, [playAudio, shouldAutoScroll]);
-
-  // Handle Envelope Click / Touch to Immediately Play Intro Video
-  const handleEnvelopeClick = (e) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (flowState !== "envelope") return;
-    setFlowState("video");
-
-    if (videoRef.current) {
-      try {
-        videoRef.current.currentTime = 0;
-      } catch (err) {
-        console.warn("Error setting currentTime:", err);
-      }
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch((err) => {
-          console.warn("Video playback was prevented:", err);
-          handleVideoEnded();
-        });
-      }
-    }
-
-    // Safety fallback timer to guarantee transition to main site
-    if (videoEndTimerRef.current) clearTimeout(videoEndTimerRef.current);
-    videoEndTimerRef.current = setTimeout(() => {
-      handleVideoEnded();
-    }, 5500);
-  };
-
-  // Monitor playback time to end cleanly right after card is fully open (before whiteout glare)
-  const handleVideoTimeUpdate = () => {
-    if (flowState === "video" && videoRef.current) {
-      if (videoRef.current.currentTime >= 0.42) {
-        setShowEnvelopeBorder(false);
-      }
-      if (videoRef.current.currentTime >= 4.45) {
-        handleVideoEnded();
-      }
-    }
-  };
-
-  // Frame-accurate synchronization: fade out border precisely when seal breaks (~0.42s) in bgenv.webm
-  useEffect(() => {
-    if (flowState !== "video" || !showEnvelopeBorder) return;
-
-    let animId;
-    const checkTime = () => {
-      if (videoRef.current && videoRef.current.currentTime >= 0.42) {
-        setShowEnvelopeBorder(false);
-        return;
-      }
-      animId = requestAnimationFrame(checkTime);
-    };
-
-    animId = requestAnimationFrame(checkTime);
-    return () => {
-      if (animId) cancelAnimationFrame(animId);
-    };
-  }, [flowState, showEnvelopeBorder]);
-
-  // Pre-seek to start once metadata is loaded
-  const handleVideoLoadedMetadata = () => {
-    if (videoRef.current) {
-      try {
-        videoRef.current.currentTime = 0;
-      } catch (err) {
-        console.warn("Error resetting currentTime:", err);
-      }
-    }
-  };
-
   // Autoscroll functionality
   useEffect(() => {
-    if (!hasOpened || !isAutoScrolling) {
+    if (!isAutoScrolling) {
       if (scrollIntervalRef.current) {
         clearInterval(scrollIntervalRef.current);
         scrollIntervalRef.current = null;
@@ -347,7 +238,7 @@ export default function App() {
       window.removeEventListener("wheel", handleUserScroll);
       window.removeEventListener("touchstart", handleUserScroll);
     };
-  }, [hasOpened, isAutoScrolling, autoScrollSpeed]);
+  }, [isAutoScrolling, autoScrollSpeed]);
 
   // Countdown timer logic - target: 26 December 2026 at 5:00 PM, Asia/Kolkata
   useEffect(() => {
@@ -515,92 +406,7 @@ https://ajmalrifa-invitation.vercel.app/`;
         </button>
       </div>
 
-      {/* Initial Screen Overlay: Envelope -> Intro Video -> Main Website */}
-      <AnimatePresence>
-        {flowState !== "completed" && (
-          <motion.div
-            key="intro-overlay"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[1000] flex flex-col items-center justify-center bg-[#fcfbf9] overflow-hidden"
-          >
-            {/* Background Floral Texture Overlay */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-              <img
-                src="/wedding/hridayam_floral_wide.png"
-                alt="Floral Decor"
-                className="w-full h-full object-cover opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#fcfbf9]/80 via-[#fcfbf9]/60 to-[#fcfbf9]/95" />
-            </div>
 
-            {/* Unified Envelope & Video Stage Container (3x Larger Prominent Sizing) */}
-            <div className="relative z-10 w-[94vw] max-w-5xl lg:max-w-6xl mx-auto flex items-center justify-center">
-              <div
-                className="relative w-full aspect-video flex items-center justify-center"
-                style={{ aspectRatio: "16 / 9" }}
-              >
-                {/* Antique Gold Vintage Corner Flourishes (Frames Envelope initially, fades out naturally as seal breaks) */}
-                <img
-                  src="/envelope_decor.png"
-                  alt="Vintage Corner Flourishes"
-                  className={`absolute inset-0 w-full h-full object-contain pointer-events-none z-30 transition-opacity duration-500 ease-out ${
-                    showEnvelopeBorder ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-
-                {/* 1. Envelope Layer (In-flow image anchors container height) */}
-                <div
-                  onClick={handleEnvelopeClick}
-                  className={`relative w-full h-full flex items-center justify-center cursor-pointer select-none group transition-opacity duration-300 ${
-                    flowState === "envelope"
-                      ? "opacity-100 pointer-events-auto z-20"
-                      : "opacity-0 pointer-events-none z-0"
-                  }`}
-                >
-                  <img
-                    src="/envelop.png"
-                    alt="Wedding Invitation Envelope"
-                    onClick={handleEnvelopeClick}
-                    className="w-full h-full object-contain drop-shadow-2xl transition-transform duration-300 group-hover:scale-[1.03] group-active:scale-[0.98] pointer-events-auto cursor-pointer"
-                  />
-                  {/* Tap Hint Badge */}
-                  <div className="absolute -bottom-8 sm:-bottom-12 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none">
-                    <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-[#d8406b] font-medium font-['Playfair_Display',serif] animate-pulse">
-                      Tap Envelope to Open
-                    </p>
-                  </div>
-                </div>
-
-                {/* 2. Intro Video Screen (Layered directly over stage) */}
-                <div
-                  className={`absolute inset-0 w-full h-full flex items-center justify-center transition-opacity duration-300 ${
-                    flowState === "video"
-                      ? "opacity-100 pointer-events-auto z-20"
-                      : "opacity-0 pointer-events-none z-0"
-                  }`}
-                >
-                  <video
-                    ref={videoRef}
-                    src="/bgenv.webm"
-                    playsInline
-                    preload="auto"
-                    onLoadedMetadata={handleVideoLoadedMetadata}
-                    onTimeUpdate={handleVideoTimeUpdate}
-                    onEnded={handleVideoEnded}
-                    onError={handleVideoEnded}
-                    className={`w-full h-full object-contain ${
-                      flowState === "video" ? "pointer-events-auto" : "pointer-events-none"
-                    }`}
-                  />
-
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* SECTION 1: HERO VIEWPORT */}
       <section className="relative w-full h-[100dvh] overflow-hidden bg-[#fcfbf9]">
@@ -703,7 +509,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             >
               <div>
                 <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
-                  AUSPICIOUS OCCASION
+                  FELICITOUS OCCASION
                 </span>
               </div>
 
@@ -802,7 +608,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-[0.2em] text-[#5a6b65] font-semibold block">
-                      Auspicious Time
+                      Propitious Time
                     </span>
                     <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
                       5:00 PM Onwards
@@ -1010,7 +816,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 6: THE WEDDING VENUE */}
-      <section className="relative w-full py-20 sm:py-28 pb-40 sm:pb-48 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
         <div className="max-w-4xl mx-auto">
           {/* Unified Royal Heirloom Venue Card */}
           <motion.div
@@ -1099,7 +905,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 7: CLOSING DUA, BLESSINGS & FAMILY COMPLIMENTS */}
-      <section className="relative w-full py-20 md:py-28 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5 text-center overflow-hidden">
+      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5 text-center overflow-hidden">
         <div className="max-w-3xl mx-auto space-y-10">
           {/* Arabic Dua */}
           <div className="space-y-4">
