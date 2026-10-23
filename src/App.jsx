@@ -110,8 +110,7 @@ export default function App() {
     venueFull: "Santo Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
     polaroidCaption: "Ajmal Ahamed R & Rifa J",
-    musicUrl:
-      "https://www.youtube.com/embed/eCGEwzHVELA?enablejsapi=1&autoplay=1&loop=1&playlist=eCGEwzHVELA",
+    musicUrl: "/audio/dheema.mp4",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
       "“We cordially invite you to join us in celebrating the Nikkah of our beloved children. Your gracious presence, heartfelt duas, and blessings will make this blessed occasion even more meaningful and memorable for both our families.”",
@@ -157,7 +156,6 @@ export default function App() {
     seconds: 0
   });
 
-  const iframeAudioRef = useRef(null);
   const htmlAudioRef = useRef(null);
   const scrollIntervalRef = useRef(null);
 
@@ -169,28 +167,23 @@ export default function App() {
 
   // Music controls
   const playAudio = useCallback(() => {
-    setIsPlayingMusic(true);
-    if (weddingData.musicUrl.includes("youtube.com")) {
-      iframeAudioRef.current?.contentWindow?.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "https://www.youtube.com"
-      );
-    } else {
-      htmlAudioRef.current?.play().catch((e) => console.log("Audio autoplay prevented", e));
-    }
-  }, [weddingData.musicUrl]);
+    if (!htmlAudioRef.current) return;
+    htmlAudioRef.current
+      .play()
+      .then(() => {
+        setIsPlayingMusic(true);
+      })
+      .catch((e) => {
+        console.log("Audio playback prevented:", e);
+        setIsPlayingMusic(false);
+      });
+  }, []);
 
   const pauseAudio = useCallback(() => {
+    if (!htmlAudioRef.current) return;
+    htmlAudioRef.current.pause();
     setIsPlayingMusic(false);
-    if (weddingData.musicUrl.includes("youtube.com")) {
-      iframeAudioRef.current?.contentWindow?.postMessage(
-        '{"event":"command","func":"pauseVideo","args":""}',
-        "https://www.youtube.com"
-      );
-    } else {
-      htmlAudioRef.current?.pause();
-    }
-  }, [weddingData.musicUrl]);
+  }, []);
 
   const toggleMusic = () => {
     if (isPlayingMusic) {
@@ -199,6 +192,38 @@ export default function App() {
       playAudio();
     }
   };
+
+  // Attempt autoplay on mount with fallback to first user interaction
+  useEffect(() => {
+    const audio = htmlAudioRef.current;
+    if (!audio) return;
+
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlayingMusic(true);
+        })
+        .catch((err) => {
+          console.log("Autoplay was prevented by browser policy:", err);
+          setIsPlayingMusic(false);
+
+          const startOnFirstInteraction = () => {
+            if (audio && audio.paused) {
+              audio
+                .play()
+                .then(() => {
+                  setIsPlayingMusic(true);
+                })
+                .catch(() => {});
+            }
+          };
+
+          window.addEventListener("click", startOnFirstInteraction, { once: true, passive: true });
+          window.addEventListener("touchstart", startOnFirstInteraction, { once: true, passive: true });
+        });
+    }
+  }, []);
 
   // Autoscroll functionality
   useEffect(() => {
@@ -365,24 +390,25 @@ https://ajmalrifa-invitation.vercel.app/`;
 
   return (
     <div className="min-h-screen bg-[#fcfbf9] text-[#2c3e38] font-['Playfair_Display',serif] selection:bg-[#d8406b]/20 selection:text-[#d8406b] relative overflow-x-hidden">
-      {/* Background YouTube OST / Audio Player */}
-      <iframe
-        ref={iframeAudioRef}
-        src="https://www.youtube.com/embed/eCGEwzHVELA?enablejsapi=1&autoplay=1&loop=1&playlist=eCGEwzHVELA"
-        allow="autoplay; encrypted-media"
-        style={{
-          position: "absolute",
-          width: "1px",
-          height: "1px",
-          opacity: 0,
-          pointerEvents: "none"
-        }}
-        title="Wedding OST"
-      />
+      {/* Background Audio Player (dheema.mp4 audio track) */}
       <audio
         ref={htmlAudioRef}
-        src="https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3"
+        src="/audio/dheema.mp4"
         loop
+        preload="auto"
+        playsInline
+        onPlay={() => setIsPlayingMusic(true)}
+        onPause={() => setIsPlayingMusic(false)}
+        onEnded={() => {
+          if (htmlAudioRef.current) {
+            htmlAudioRef.current.currentTime = 0;
+            htmlAudioRef.current.play().catch(() => {});
+          }
+        }}
+        onError={(e) => {
+          console.warn("Audio playback error:", e);
+          setIsPlayingMusic(false);
+        }}
         style={{ display: "none" }}
       />
 
@@ -422,28 +448,34 @@ https://ajmalrifa-invitation.vercel.app/`;
             alt="Bougainvillea Floral Aesthetic"
             className="w-full h-full object-cover object-[20%_top] md:object-left-top opacity-60 md:opacity-100"
           />
-          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-b from-[#fcfbf9]/95 via-[#fcfbf9]/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-[#fcfbf9]/95 md:from-[#fcfbf9]/40 via-[#fcfbf9]/60 md:via-transparent to-transparent" />
         </motion.div>
 
         {/* Hero Title & Names Overlay */}
-        <div className="absolute inset-0 z-10 w-full px-6 sm:px-10 md:px-14 lg:pl-10 pr-8 sm:pr-14 md:pr-24 lg:pr-36 xl:pr-44 flex flex-col justify-center items-end">
+        <div className="absolute inset-0 z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-center items-center md:items-end">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-col items-center text-center"
+            className="flex flex-col items-center text-center md:text-right w-full max-w-4xl"
           >
-            {/* Nikkah of */}
-            <div className="w-full flex flex-col items-center mb-2 text-center">
-              <span className="font-['Playfair_Display',serif] text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-[#d8406b] font-bold text-center">
-                Nikkah of
-              </span>
-            </div>
+            {/* Nikkah - Replicating Hridayam Position & Scale */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight text-[#d8406b] drop-shadow-sm md:drop-shadow-none"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              Nikkah
+            </motion.h1>
 
             {/* Ajmal Ahamed & Rifa */}
-            <h1 className="font-['Playfair_Display',serif] text-5xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-[#2c3e38] text-center drop-shadow-sm">
-              Ajmal Ahamed &amp; Rifa
-            </h1>
+            <div className="flex flex-col items-center md:items-end mt-3 sm:mt-4 w-full">
+              <span className="font-['Playfair_Display',serif] text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight text-[#2c3e38] font-bold">
+                Ajmal Ahamed &amp; Rifa
+              </span>
+            </div>
           </motion.div>
         </div>
 
@@ -461,17 +493,17 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 2: WEDDING INVITATION & NIKKAH CEREMONY HERO */}
-      <section className="relative w-full py-20 md:py-32 px-6 md:px-12 bg-[#fcfbf9] z-20">
+      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-[#fcfbf9] z-20">
         <div className="max-w-6xl mx-auto">
           {/* Two-Column Grid directly on the clean page background */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             {/* Left Side: Wedding Invitation */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 1 }}
-              className="col-span-1 lg:col-span-6 flex flex-col space-y-5 text-center lg:text-left"
+              className="col-span-1 lg:col-span-6 flex flex-col space-y-4 text-center lg:text-left"
             >
               <div>
                 <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
@@ -483,7 +515,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 Wedding Invitation
               </h2>
 
-              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-2 font-['Playfair_Display',serif]">
+              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]">
                 {weddingData.invitationMessage}
               </p>
             </motion.div>
@@ -494,7 +526,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 1 }}
-              className="col-span-1 lg:col-span-6 flex flex-col space-y-6 text-center lg:text-left"
+              className="col-span-1 lg:col-span-6 flex flex-col space-y-4 text-center lg:text-left"
             >
               <div>
                 <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
@@ -506,7 +538,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 The Nikkah Ceremony
               </h3>
 
-              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-2 font-['Playfair_Display',serif]">
+              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]">
                 In sha Allah, to be solemnized in the gracious presence of family and loved ones
               </p>
 
@@ -534,10 +566,10 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 3: EVENT DETAILS & COUNTDOWN */}
-      <section className="section-event-countdown relative w-full py-24 md:py-32 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      <section className="section-event-countdown relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12 md:mb-14">
             <div className="mb-3">
               <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 OUR BLESSED BEGINNING
@@ -552,12 +584,12 @@ https://ajmalrifa-invitation.vercel.app/`;
           </div>
 
           {/* Trendy Dual Luxury Event Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
             {/* Card 1: Sacred Date & Time */}
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="card-datetime group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="card-datetime group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-7 sm:p-9 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -610,7 +642,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             <motion.div
               whileHover={{ y: -4 }}
               transition={{ duration: 0.3 }}
-              className="card-venue group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-8 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
+              className="card-venue group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-7 sm:p-9 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
             >
               {/* Decorative Corner Flourish Glow */}
               <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
@@ -660,12 +692,12 @@ https://ajmalrifa-invitation.vercel.app/`;
           </div>
 
           {/* Action Callout: Add Nikkah to Google Calendar */}
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-10">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={addNikahToCalendar}
-              className="cal-btn-wrapper inline-flex items-center gap-3 px-10 py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
+              className="cal-btn-wrapper inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
             >
               <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
                 <Calendar size={13} />
@@ -675,14 +707,14 @@ https://ajmalrifa-invitation.vercel.app/`;
           </div>
 
           {/* Countdown to the Nikkah - Classic Stationery Style */}
-          <div className="mt-20 pt-16 border-t border-[#2c3e38]/10 text-center">
-            <div className="mb-3">
+          <div className="mt-12 sm:mt-16 pt-10 sm:pt-12 border-t border-[#2c3e38]/10 text-center">
+            <div className="mb-2.5">
               <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 COUNTDOWN TO THE NIKKAH
               </span>
             </div>
 
-            <p className="text-[#5a6b65] font-light max-w-md mx-auto text-sm md:text-base mb-10 font-['Playfair_Display',serif] italic">
+            <p className="text-[#5a6b65] font-light max-w-md mx-auto text-sm md:text-base mb-8 sm:mb-10 font-['Playfair_Display',serif] italic">
               {weddingData.countdownDescription}
             </p>
 
@@ -707,11 +739,11 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 5: PROGRAM OF WEDDING CELEBRATIONS */}
-      <section className="relative w-full py-20 md:py-28 px-6 md:px-12 bg-[#fcfbf9] border-t border-[#2c3e38]/5">
+      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-[#fcfbf9] border-t border-[#2c3e38]/5">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-14 md:mb-18 space-y-2">
-            <div className="mb-3">
+          {/* Header - Harmonious balanced relationship between pill, heading, and intro paragraph */}
+          <div className="text-center mb-10 md:mb-14">
+            <div className="mb-5 sm:mb-6">
               <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                 PROGRAMME OF CELEBRATIONS
               </span>
@@ -721,13 +753,13 @@ https://ajmalrifa-invitation.vercel.app/`;
               Program of Wedding Celebrations
             </h2>
 
-            <p className="text-[#5a6b65] font-light italic text-base sm:text-lg max-w-lg mx-auto font-['Cormorant_Garamond',serif]">
+            <p className="text-[#5a6b65] font-light italic text-base sm:text-lg max-w-lg mx-auto font-['Cormorant_Garamond',serif] mt-4">
               By the grace of Almighty Allah, we warmly invite you to celebrate these cherished moments with our families.
             </p>
           </div>
 
           {/* Program Events Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {weddingData.events.map((event, index) => {
               const isNikah = event.id === "nikah";
               return (
@@ -737,10 +769,10 @@ https://ajmalrifa-invitation.vercel.app/`;
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.15 }}
-                  className="bg-white rounded-2xl p-6 sm:p-8 border border-[#c5a059]/35 shadow-sm hover:shadow-md transition-shadow relative text-center flex flex-col justify-between"
+                  className="bg-white rounded-2xl p-5 sm:p-7 border border-[#c5a059]/35 shadow-sm hover:shadow-md transition-shadow relative text-center flex flex-col justify-between"
                 >
                   {/* Traditional Inner Frame */}
-                  <div className="border border-[#c5a059]/20 rounded-xl p-6 sm:p-8 flex flex-col justify-between h-full">
+                  <div className="border border-[#c5a059]/20 rounded-xl p-5 sm:p-7 flex flex-col justify-between h-full">
                     <div className="space-y-3">
                       {/* Event Number Kicker */}
                       <span className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#8c6b2d] block font-sans">
@@ -753,7 +785,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                       </h3>
 
                       {/* Traditional Gold Filigree Divider */}
-                      <div className="py-2 flex items-center justify-center gap-3">
+                      <div className="py-1.5 flex items-center justify-center gap-3">
                         <span className="h-px w-10 bg-[#c5a059]/30" />
                         <Heart className="w-4 h-4 text-[#d8406b] fill-[#d8406b]" />
                         <span className="h-px w-10 bg-[#c5a059]/30" />
@@ -770,13 +802,13 @@ https://ajmalrifa-invitation.vercel.app/`;
                       </div>
 
                       {/* Traditional Phrasing */}
-                      <p className="text-[#5a6b65] font-light text-xs sm:text-sm leading-relaxed max-w-xs mx-auto pt-2 font-['Playfair_Display',serif] italic">
+                      <p className="text-[#5a6b65] font-light text-xs sm:text-sm leading-relaxed max-w-xs mx-auto pt-1 font-['Playfair_Display',serif] italic">
                         {event.details}
                       </p>
                     </div>
 
                     {/* Add to Calendar Action Button */}
-                    <div className="mt-8 pt-5 border-t border-[#c5a059]/15 flex justify-center">
+                    <div className="mt-6 pt-4 border-t border-[#c5a059]/15 flex justify-center">
                       <button
                         onClick={() => addEventToCalendar(event)}
                         className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-[#2c3e38] hover:bg-[#1a2522] text-white text-[11px] uppercase tracking-[0.18em] font-medium shadow-sm hover:shadow-md transition-all border border-[#c5a059]/40 cursor-pointer"
@@ -794,7 +826,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 6: THE WEDDING VENUE */}
-      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      <section className="section-celebration-venue relative w-full px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
         <div className="max-w-4xl mx-auto">
           {/* Unified Royal Heirloom Venue Card */}
           <motion.div
@@ -802,15 +834,15 @@ https://ajmalrifa-invitation.vercel.app/`;
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            className="bg-gradient-to-b from-[#ffffff] via-[#fdfbf7] to-[#f9f5ec] rounded-3xl sm:rounded-[2.5rem] p-7 sm:p-12 md:p-14 border border-[#c5a059]/40 shadow-[0_12px_40px_-12px_rgba(44,62,56,0.08)] relative overflow-hidden"
+            className="bg-gradient-to-b from-[#ffffff] via-[#fdfbf7] to-[#f9f5ec] rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 md:p-12 border border-[#c5a059]/40 shadow-[0_12px_40px_-12px_rgba(44,62,56,0.08)] relative overflow-hidden"
           >
             {/* Traditional Inner Hairline Frame */}
             <div className="absolute inset-3 sm:inset-4 rounded-2xl sm:rounded-[2rem] border border-[#c5a059]/25 pointer-events-none" />
 
             {/* Venue Header & Details */}
-            <div className="text-center relative z-10 space-y-3 max-w-2xl mx-auto">
+            <div className="text-center relative z-10 space-y-2.5 max-w-2xl mx-auto">
               {/* Header Kicker */}
-              <div className="mb-3">
+              <div className="mb-4">
                 <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
                   CELEBRATION VENUE
                 </span>
@@ -832,7 +864,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               </div>
 
               {/* Traditional Gold Filigree Divider */}
-              <div className="py-2 flex items-center justify-center gap-3">
+              <div className="py-1.5 flex items-center justify-center gap-3">
                 <span className="h-px w-12 bg-[#c5a059]/30" />
                 <Heart className="w-4 h-4 text-[#d8406b] fill-[#d8406b]" />
                 <span className="h-px w-12 bg-[#c5a059]/30" />
@@ -849,7 +881,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center justify-center gap-3.5 pt-4">
+              <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
                 <button
                   onClick={openMapsDirections}
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#2c3e38] hover:bg-[#1a2522] text-white text-xs uppercase tracking-wider font-semibold shadow-md hover:shadow-lg transition-all border border-[#c5a059]/40 cursor-pointer whitespace-nowrap"
@@ -868,7 +900,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             </div>
 
             {/* Framed Interactive Map */}
-            <div className="w-full h-80 sm:h-[400px] rounded-2xl overflow-hidden border border-[#c5a059]/35 shadow-inner bg-white mt-10 relative z-10">
+            <div className="w-full h-80 sm:h-[400px] rounded-2xl overflow-hidden border border-[#c5a059]/35 shadow-inner bg-white mt-8 sm:mt-9 relative z-10">
               <iframe
                 title="Santo Lawn Pondicherry Map"
                 src="https://maps.google.com/maps?q=Santo+Lawn,+Pondicherry&t=&z=15&ie=UTF8&iwloc=&output=embed"
@@ -881,15 +913,15 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 7: CLOSING DUA, BLESSINGS & FAMILY COMPLIMENTS */}
-      <section className="relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5 text-center overflow-hidden">
-        <div className="max-w-3xl mx-auto space-y-10">
+      <section className="section-dua-blessings relative w-full px-6 md:px-12 bg-white border-t border-[#2c3e38]/5 text-center overflow-hidden">
+        <div className="max-w-3xl mx-auto space-y-8 sm:space-y-9">
           {/* Arabic Dua */}
-          <div className="space-y-4">
+          <div className="space-y-3">
             <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
               DUA &amp; BLESSINGS
             </span>
 
-            <div className="py-4">
+            <div className="py-2.5 sm:py-3">
               <span
                 dir="rtl"
                 lang="ar"
@@ -911,7 +943,7 @@ https://ajmalrifa-invitation.vercel.app/`;
           </div>
 
           {/* Closing Message */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-3.5">
             <p className="text-[#2c3e38] text-base md:text-lg leading-relaxed font-light max-w-2xl mx-auto font-['Playfair_Display',serif]">
               {weddingData.closingMessage}
             </p>
@@ -922,7 +954,7 @@ https://ajmalrifa-invitation.vercel.app/`;
           </div>
 
           {/* Family Compliments Card */}
-          <div className="mt-12 pt-8 border-t border-[#2c3e38]/10 bg-[#fcfbf9] p-8 md:p-10 rounded-3xl border border-[#2c3e38]/5 shadow-sm space-y-3">
+          <div className="mt-8 sm:mt-10 pt-6 sm:pt-7 border-t border-[#2c3e38]/10 bg-[#fcfbf9] p-6 sm:p-8 md:p-9 rounded-3xl border border-[#2c3e38]/5 shadow-sm space-y-2.5">
             <span className="text-xs uppercase tracking-[0.25em] text-[#d8406b] font-bold block">
               {weddingData.complimentsIntro}
             </span>
@@ -939,8 +971,8 @@ https://ajmalrifa-invitation.vercel.app/`;
       </section>
 
       {/* SECTION 8: SHARE THIS INVITATION */}
-      <section className="relative w-full py-16 px-6 md:px-12 bg-[#fcfbf9] border-t border-[#2c3e38]/5 text-center">
-        <div className="max-w-xl mx-auto space-y-6">
+      <section className="relative w-full py-12 sm:py-16 px-6 md:px-12 bg-[#fcfbf9] border-t border-[#2c3e38]/5 text-center">
+        <div className="max-w-xl mx-auto space-y-4 sm:space-y-5">
           <h2 className="text-3xl md:text-4xl text-[#2c3e38] font-['Playfair_Display',serif]">
             Share This Invitation
           </h2>
@@ -949,7 +981,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             Share our wedding card with your family, relatives, and friends on WhatsApp or copy the link to share.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2 sm:pt-3">
             {/* WhatsApp Share Button */}
             <button
               onClick={handleWhatsAppShare}
@@ -971,9 +1003,8 @@ https://ajmalrifa-invitation.vercel.app/`;
         </div>
       </section>
 
-
       {/* FOOTER */}
-      <footer className="py-12 bg-[#fcfbf9] text-center border-t border-[#2c3e38]/5">
+      <footer className="py-8 sm:py-10 bg-[#fcfbf9] text-center border-t border-[#2c3e38]/5">
         <p className="text-[#5a6b65] text-xs font-medium tracking-[0.3em] uppercase">
           A Blessed Journey of Love &amp; Duas
         </p>
