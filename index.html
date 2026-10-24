@@ -16,15 +16,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
-  <!-- Background Audio Player: Initialized as early as practical during page load -->
+  <!-- Background Audio Player: Auto plays unmuted & loops seamlessly -->
   <audio
     id="bg-music"
     src="/audio/dheema.mp4"
+    autoplay
     loop
     preload="auto"
     playsinline
@@ -34,25 +35,42 @@
     (function () {
       const audio = document.getElementById("bg-music");
       if (!audio) return;
-      const tryPlay = () => {
-        const p = audio.play();
-        if (p !== undefined) {
-          p.then(() => removeInteractionListeners()).catch(() => {});
+      audio.muted = false;
+      audio.loop = true;
+      audio.volume = 1.0;
+
+      const userGestureEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown", "mousedown"];
+
+      const startAudio = function () {
+        if (audio.paused) {
+          audio.muted = false;
+          const p = audio.play();
+          if (p !== undefined) {
+            p.then(function () {
+              cleanup();
+            }).catch(function () {});
+          }
+        } else {
+          cleanup();
         }
       };
-      const onUserInteraction = () => {
-        tryPlay();
-      };
-      const interactionEvents = ["pointerdown", "touchstart", "click", "keydown", "wheel", "scroll"];
-      const removeInteractionListeners = () => {
-        interactionEvents.forEach((evt) => {
-          window.removeEventListener(evt, onUserInteraction);
+
+      function cleanup() {
+        userGestureEvents.forEach(function (evt) {
+          window.removeEventListener(evt, startAudio, true);
+          document.removeEventListener(evt, startAudio, true);
         });
-      };
-      interactionEvents.forEach((evt) => {
-        window.addEventListener(evt, onUserInteraction, { once: true, passive: true });
+      }
+
+      userGestureEvents.forEach(function (evt) {
+        window.addEventListener(evt, startAudio, { capture: true, passive: true });
+        document.addEventListener(evt, startAudio, { capture: true, passive: true });
       });
-      tryPlay();
+
+      audio.addEventListener("playing", cleanup, { once: true });
+
+      // Immediate attempt on page load
+      startAudio();
     })();
   </script>
 

@@ -107,9 +107,9 @@ export default function App() {
     date: "Saturday, 26th December 2026",
     islamicDate: "17 Rajab 1448 AH",
     time: "5:00 PM",
-    venue: "Santo Lawn",
+    venue: "Santho Lawn",
     location: "Pondicherry",
-    venueFull: "Santo Lawn, Pondicherry",
+    venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
     polaroidCaption: "Ajmal Ahamed R & Rifa J",
     musicUrl: "/audio/dheema.mp4",
@@ -145,7 +145,7 @@ export default function App() {
       "“May Allah bless this union with love, mercy, understanding, and happiness. We humbly request your presence and duas as our families come together to celebrate this blessed occasion.”",
     additionalMessage: "Your presence and prayers are sincerely appreciated.",
     complimentsIntro: "With Warm Compliments & Duas From:",
-    complimentsFamily: "The Families of Ajmal Ahamed R & Rifa J",
+    complimentsFamily: "The Families of Ajmal Ahamed & Rifa",
     complimentsOthers: "Relatives, Friends, and Well-Wishers in Pondicherry"
   };
 
@@ -171,6 +171,8 @@ export default function App() {
   const playAudio = useCallback(() => {
     const audio = htmlAudioRef.current || document.getElementById("bg-music");
     if (!audio) return;
+    audio.muted = false;
+    audio.loop = true;
     audio
       .play()
       .then(() => {
@@ -202,6 +204,8 @@ export default function App() {
     const audio = document.getElementById("bg-music");
     if (!audio) return;
     htmlAudioRef.current = audio;
+    audio.muted = false;
+    audio.loop = true;
 
     const onPlay = () => setIsPlayingMusic(true);
     const onPause = () => setIsPlayingMusic(false);
@@ -212,37 +216,54 @@ export default function App() {
 
     audio.addEventListener("play", onPlay);
     audio.addEventListener("pause", onPause);
+    audio.addEventListener("playing", onPlay);
     audio.addEventListener("error", onError);
 
-    // Attempt playback promptly when permitted if paused
-    if (audio.paused) {
+    // Initial check
+    if (!audio.paused) {
+      setIsPlayingMusic(true);
+    } else {
+      audio.muted = false;
       audio
         .play()
         .then(() => setIsPlayingMusic(true))
         .catch(() => { });
     }
 
+    const userGestureEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown", "mousedown"];
     const startOnInteraction = () => {
       if (audio.paused) {
+        audio.muted = false;
         audio
           .play()
-          .then(() => setIsPlayingMusic(true))
+          .then(() => {
+            setIsPlayingMusic(true);
+            removeInteractionListeners();
+          })
           .catch(() => { });
+      } else {
+        removeInteractionListeners();
       }
     };
 
-    const interactionEvents = ["pointerdown", "touchstart", "click", "keydown", "wheel", "scroll"];
-    interactionEvents.forEach((evt) => {
-      window.addEventListener(evt, startOnInteraction, { once: true, passive: true });
+    const removeInteractionListeners = () => {
+      userGestureEvents.forEach((evt) => {
+        window.removeEventListener(evt, startOnInteraction, true);
+        document.removeEventListener(evt, startOnInteraction, true);
+      });
+    };
+
+    userGestureEvents.forEach((evt) => {
+      window.addEventListener(evt, startOnInteraction, { capture: true, passive: true });
+      document.addEventListener(evt, startOnInteraction, { capture: true, passive: true });
     });
 
     return () => {
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("playing", onPlay);
       audio.removeEventListener("error", onError);
-      interactionEvents.forEach((evt) => {
-        window.removeEventListener(evt, startOnInteraction);
-      });
+      removeInteractionListeners();
     };
   }, []);
 
@@ -334,10 +355,10 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
-  // Google Maps navigation handler - Santo Lawn, Pondicherry
+  // Google Maps navigation handler - Santho Lawn, Pondicherry
   const openMapsDirections = () => {
     window.open(
-      "https://www.google.com/maps/dir/?api=1&destination=Santo+Lawn,+Pondicherry",
+      "https://www.google.com/maps/dir/?api=1&destination=Santho+Lawn,+Pondicherry",
       "_blank"
     );
   };
@@ -346,9 +367,9 @@ export default function App() {
   const addNikahToCalendar = () => {
     const title = encodeURIComponent("The Nikkah Ceremony: Ajmal Ahamed R & Rifa J");
     const details = encodeURIComponent(
-      "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikkah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santo Lawn, Pondicherry"
+      "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikkah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santho Lawn, Pondicherry"
     );
-    const location = encodeURIComponent("Santo Lawn, Pondicherry");
+    const location = encodeURIComponent("Santho Lawn, Pondicherry");
     // 26 Dec 2026 17:00 to 18:00 IST (UTC+05:30 -> 11:30 to 12:30 UTC)
     const dates = "20261226T113000Z/20261226T123000Z";
     const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dates}&ctz=Asia/Kolkata`;
@@ -359,9 +380,9 @@ export default function App() {
   const addEventToCalendar = (event) => {
     const title = encodeURIComponent(`${event.title} - Ajmal Ahamed R & Rifa J`);
     const details = encodeURIComponent(
-      `${event.details}\n\nVenue: Santo Lawn, Pondicherry`
+      `${event.details}\n\nVenue: Santho Lawn, Pondicherry`
     );
-    const location = encodeURIComponent("Santo Lawn, Pondicherry");
+    const location = encodeURIComponent("Santho Lawn, Pondicherry");
     let dates = "20261226T113000Z/20261226T123000Z";
     if (event.id === "reception") {
       // 6:30 PM to 9:30 PM IST (UTC 13:00 to 16:00)
@@ -411,7 +432,7 @@ https://ajmalrifa-invitation.vercel.app/`;
   // Copy Venue Address to Clipboard
   const handleCopyAddress = async () => {
     try {
-      const address = "Santo Lawn, Tindivanam Highway, Vanur, Pondicherry 605109";
+      const address = "Near Moratandi Tollgate, Near Jipmer Hospital.";
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(address);
       } else {
@@ -424,7 +445,7 @@ https://ajmalrifa-invitation.vercel.app/`;
       }
       showToast("Venue address copied to clipboard!");
     } catch (err) {
-      showToast("Santo Lawn, Vanur, Pondicherry");
+      showToast("Near Moratandi Tollgate, Near Jipmer Hospital.");
     }
   };
 
@@ -530,8 +551,8 @@ https://ajmalrifa-invitation.vercel.app/`;
               </h2>
 
               <p
-                className="text-justify text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]"
-                style={{ textAlign: "justify" }}
+                className="text-left text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]"
+                style={{ textAlign: "left" }}
               >
                 {weddingData.invitationMessage}
               </p>
@@ -564,7 +585,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 {/* Card 1: Ajmal Ahamed R */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
-                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight py-2">
+                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2">
                     Ajmal Ahamed R
                   </div>
                 </div>
@@ -572,7 +593,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 {/* Card 2: Rifa J */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
-                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight py-2">
+                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2">
                     Rifa J
                   </div>
                 </div>
@@ -685,7 +706,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                     Solemnization &amp; Feast
                   </span>
                   <div className="card-venue-title text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
-                    Santo Lawn
+                    Santho Lawn
                   </div>
                 </div>
 
@@ -873,10 +894,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               {/* Venue Name Highlight */}
               <div className="pt-1">
                 <p className="text-2xl sm:text-3xl text-[#d8406b] font-['Playfair_Display',serif] font-bold tracking-tight">
-                  Santo Lawn
-                </p>
-                <p className="text-xs uppercase tracking-[0.25em] text-[#8c6b2d] font-sans font-medium mt-1">
-                  Vanur, Pondicherry
+                  Santho Lawn
                 </p>
               </div>
 
@@ -889,7 +907,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               {/* Full Address Block */}
               <p className="text-base sm:text-lg text-[#2c3e38] font-['Cormorant_Garamond',serif] font-medium leading-relaxed">
-                Tindivanam Highway, Vanur, Pondicherry — 605109
+                Near Moratandi Tollgate, Near Jipmer Hospital.
               </p>
 
               {/* Traditional Welcome Wording */}
@@ -919,8 +937,8 @@ https://ajmalrifa-invitation.vercel.app/`;
             {/* Framed Interactive Map */}
             <div className="w-full h-80 sm:h-[400px] rounded-2xl overflow-hidden border border-[#c5a059]/35 shadow-inner bg-white mt-8 sm:mt-9 relative z-10">
               <iframe
-                title="Santo Lawn Pondicherry Map"
-                src="https://maps.google.com/maps?q=Santo+Lawn,+Pondicherry&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                title="Santho Lawn Pondicherry Map"
+                src="https://maps.google.com/maps?q=Santho+Lawn,+Pondicherry&t=&z=15&ie=UTF8&iwloc=&output=embed"
                 className="w-full h-full border-none"
                 loading="lazy"
               />
