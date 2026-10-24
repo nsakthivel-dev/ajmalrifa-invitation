@@ -616,13 +616,10 @@ https://ajmalrifa-invitation.vercel.app/`;
             <h2 className="text-4xl sm:text-5xl md:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] tracking-tight font-bold">
               A Day to Remember
             </h2>
-            <p className="text-[#5a6b65] font-light text-base md:text-lg italic mt-3 max-w-xl mx-auto font-['Playfair_Display',serif]">
-              Join us as we celebrate a cherished union blessed by Allah, surrounded by love, prayers, and the warmth of our families.
-            </p>
           </div>
 
-          {/* Trendy Dual Luxury Event Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+          {/* Luxury Event Card: Sacred Date & Time */}
+          <div className="max-w-xl mx-auto">
             {/* Card 1: Sacred Date & Time */}
             <motion.div
               whileHover={{ y: -4 }}
@@ -669,58 +666,6 @@ https://ajmalrifa-invitation.vercel.app/`;
                     </span>
                     <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
                       5:00 PM
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-            </motion.div>
-
-            {/* Card 2: Sacred Venue */}
-            <motion.div
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.3 }}
-              className="card-venue group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-7 sm:p-9 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
-            >
-              {/* Decorative Corner Flourish Glow */}
-              <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/50 to-transparent" />
-
-              <div className="space-y-6 relative z-10">
-                {/* Badge Header */}
-                <div className="card-badge-header flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
-                    <MapPin size={14} />
-                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
-                      Wedding Venue
-                    </span>
-                  </div>
-                  <span className="text-xs text-[#5a6b65] tracking-widest uppercase font-medium">
-                    Celebration Site
-                  </span>
-                </div>
-
-                {/* Venue Name Highlight */}
-                <div className="space-y-2">
-                  <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
-                    Solemnization &amp; Feast
-                  </span>
-                  <div className="card-venue-title text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
-                    Santho Lawn
-                  </div>
-                </div>
-
-                {/* City & Address */}
-                <div className="flex items-center gap-3 pt-4 border-t border-[#2c3e38]/10">
-                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm">
-                    <MapPin size={16} />
-                  </div>
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[#5a6b65] font-semibold block">
-                      Destination
-                    </span>
-                    <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
-                      Pondicherry
                     </span>
                   </div>
                 </div>
