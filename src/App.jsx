@@ -550,10 +550,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 Wedding Invitation
               </h2>
 
-              <p
-                className="text-left text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]"
-                style={{ textAlign: "left" }}
-              >
+              <p className="text-center lg:text-left text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]">
                 {weddingData.invitationMessage}
               </p>
             </motion.div>
@@ -603,76 +600,112 @@ https://ajmalrifa-invitation.vercel.app/`;
         </div>
       </section>
 
-      {/* SECTION 3: EVENT DETAILS & COUNTDOWN */}
-      <section className="section-event-countdown relative w-full py-16 sm:py-24 px-6 md:px-12 bg-white border-t border-[#2c3e38]/5">
+      {/* SECTION 3: EVENT DETAILS & COUNTDOWN (EDITORIAL INVITATION REDESIGN) */}
+      <section className="section-event-countdown relative w-full py-16 sm:py-24 px-6 md:px-12 bg-[#fdfcf9] border-t border-[#2c3e38]/5 overflow-hidden">
         <div className="max-w-5xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12 md:mb-14">
+          {/* Section Heading */}
+          <div className="text-center mb-8 sm:mb-10">
             <div className="mb-3">
-              <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full">
+              <span className="inline-block text-[10px] uppercase tracking-[0.4em] font-bold text-[#d8406b] border border-[#d8406b]/20 px-4 py-1.5 rounded-full bg-white/60">
                 OUR BLESSED BEGINNING
               </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] tracking-tight font-bold">
               A Day to Remember
             </h2>
+
+            {/* Subtle Antique-Gold Hairline Flourish Divider */}
+            <div className="flex items-center justify-center gap-3 pt-3">
+              <span className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#c5a059]/40 to-[#c5a059]/60" />
+              <svg className="w-3.5 h-3.5 text-[#c5a059]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#c5a059" fillOpacity="0.25" />
+              </svg>
+              <span className="h-px w-12 sm:w-16 bg-gradient-to-l from-transparent via-[#c5a059]/40 to-[#c5a059]/60" />
+            </div>
           </div>
 
-          {/* Luxury Event Card: Sacred Date & Time */}
-          <div className="max-w-xl mx-auto">
-            {/* Card 1: Sacred Date & Time */}
-            <motion.div
-              whileHover={{ y: -4 }}
-              transition={{ duration: 0.3 }}
-              className="card-datetime group relative bg-gradient-to-br from-white via-white/90 to-[#fdfbf7] rounded-[2rem] p-7 sm:p-9 md:p-10 border border-[#d8406b]/15 shadow-[0_15px_40px_-15px_rgba(216,64,107,0.08)] hover:shadow-[0_25px_50px_-12px_rgba(216,64,107,0.15)] transition-all flex flex-col justify-between overflow-hidden"
-            >
-              {/* Decorative Corner Flourish Glow */}
-              <div className="absolute top-0 right-0 w-36 h-36 bg-[#f4ebd8] rounded-full blur-2xl opacity-60 pointer-events-none group-hover:scale-125 transition-transform" />
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/50 to-transparent" />
+          {/* Event Details Layout: Editorial Wedding Invitation Composition */}
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="editorial-invitation relative max-w-3xl mx-auto my-6 sm:my-8 p-6 sm:p-10 md:p-12 bg-white/85 backdrop-blur-xs rounded-3xl border border-[#c5a059]/30 shadow-[0_12px_45px_-15px_rgba(44,62,56,0.06)] overflow-hidden"
+          >
+            {/* Delicate Botanical Corner Flourishes (hidden on small mobile to prevent any content interference) */}
+            <div className="hidden sm:block absolute top-4 left-4 text-[#c5a059]/20 pointer-events-none select-none">
+              <svg width="40" height="40" viewBox="0 0 50 50" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <path d="M5,5 Q25,8 25,25 Q8,25 5,5 Z" />
+                <path d="M5,5 L35,5" strokeDasharray="2 2" />
+                <path d="M5,5 L5,35" strokeDasharray="2 2" />
+                <circle cx="25" cy="25" r="2" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="hidden sm:block absolute bottom-4 right-4 text-[#c5a059]/20 pointer-events-none select-none rotate-180">
+              <svg width="40" height="40" viewBox="0 0 50 50" fill="none" stroke="currentColor" strokeWidth="1.2">
+                <path d="M5,5 Q25,8 25,25 Q8,25 5,5 Z" />
+                <path d="M5,5 L35,5" strokeDasharray="2 2" />
+                <path d="M5,5 L5,35" strokeDasharray="2 2" />
+                <circle cx="25" cy="25" r="2" fill="currentColor" />
+              </svg>
+            </div>
 
-              <div className="space-y-6 relative z-10">
-                {/* Badge Header */}
-                <div className="card-badge-header flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#d8406b]/10 border border-[#d8406b]/20 text-[#d8406b]">
-                    <Calendar size={14} />
-                    <span className="text-[10px] uppercase tracking-[0.25em] font-bold">
-                      Date &amp; Time
-                    </span>
-                  </div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2c3e38]/5 text-[#2c3e38] text-[11px] font-medium font-['Playfair_Display',serif]">
-                    <Sparkles size={11} className="text-[#d8406b]" />
-                    {weddingData.islamicDate}
-                  </span>
+            {/* Elegant Clean Vertical Center Divider (Desktop only, completely independent of content) */}
+            <div className="hidden md:block absolute left-1/2 top-10 bottom-10 -translate-x-1/2 w-px bg-gradient-to-b from-transparent via-[#c5a059]/35 to-transparent pointer-events-none" />
+
+            {/* Symmetrical Two-Column Grid: 50/50 Desktop with Clean Center Separation, Stacked on Mobile */}
+            <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0 items-center">
+              {/* Left Column — Date Centerpiece */}
+              <div className="flex flex-col items-center text-center md:pr-8 lg:pr-12">
+                {/* Saturday Label: Perfectly Centered Above Date */}
+                <span className="text-xs uppercase tracking-[0.35em] text-[#8c6b2d] font-semibold font-sans block mb-1">
+                  SATURDAY
+                </span>
+
+                {/* 26 Centerpiece: Cleanly Centered */}
+                <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-['Playfair_Display',serif] font-bold text-[#2c3e38] leading-none tracking-tight select-none my-1">
+                  26
                 </div>
 
-                {/* Date Highlight */}
-                <div className="space-y-2">
-                  <span className="text-xs uppercase tracking-[0.3em] text-[#5a6b65] font-semibold block">
-                    Saturday
-                  </span>
-                  <div className="card-date-title text-3xl sm:text-4xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight">
-                    26th December 2026
-                  </div>
-                </div>
+                {/* December 2026: Cleanly Centered */}
+                <span className="text-xl sm:text-2xl font-['Playfair_Display',serif] text-[#2c3e38] font-medium tracking-wide block mt-1">
+                  December 2026
+                </span>
 
-                {/* Time Highlight with Icon */}
-                <div className="flex items-center gap-3 pt-4 border-t border-[#2c3e38]/10">
-                  <div className="w-10 h-10 rounded-full bg-[#fcfbf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-sm">
-                    <Clock size={16} />
-                  </div>
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-[#5a6b65] font-semibold block">
-                      Propitious Time
-                    </span>
-                    <span className="text-lg font-bold text-[#2c3e38] font-['Playfair_Display',serif]">
-                      5:00 PM
-                    </span>
-                  </div>
+                {/* Delicate Gold Rule Divider */}
+                <div className="w-16 h-px bg-gradient-to-r from-transparent via-[#c5a059]/60 to-transparent my-3.5 mx-auto" />
+
+                {/* Hijri Date Understated Badge: Completely visible, centered below date, independent of any divider */}
+                <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#2c3e38]/5 border border-[#2c3e38]/10 text-[#5a6b65] text-xs font-['Playfair_Display',serif] italic max-w-full">
+                  <Sparkles size={11} className="text-[#d8406b] shrink-0" />
+                  <span className="truncate">{weddingData.islamicDate}</span>
                 </div>
               </div>
 
-            </motion.div>
-          </div>
+              {/* Right Column — Time & Ceremony Details */}
+              <div className="flex flex-col items-center text-center md:pl-8 lg:pl-12">
+                {/* Clock Icon + PROPITIOUS TIME Label: Horizontally & Vertically Aligned */}
+                <div className="inline-flex items-center justify-center gap-2 text-[#8c6b2d] mb-2 sm:mb-3">
+                  <div className="w-7 h-7 rounded-full bg-[#fdfcf9] border border-[#d8406b]/20 flex items-center justify-center text-[#d8406b] shadow-xs shrink-0">
+                    <Clock size={14} />
+                  </div>
+                  <span className="text-[11px] uppercase tracking-[0.25em] font-semibold font-sans">
+                    Propitious Time
+                  </span>
+                </div>
+
+                {/* 5:00 PM Refined Typography: Exactly ONE text element on one consistent baseline */}
+                <div className="text-4xl sm:text-5xl lg:text-6xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold tracking-tight leading-normal my-1 sm:my-2 select-none">
+                  5:00 PM
+                </div>
+
+                {/* Supporting Detail & Ceremony Note: Ample breathing space, no collision */}
+                <p className="text-xs sm:text-sm text-[#5a6b65] font-['Playfair_Display',serif] italic mt-2.5 max-w-xs text-center leading-relaxed">
+                  In sha Allah, solemnization begins promptly with prayers for the newlyweds.
+                </p>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Action Callout: Add Nikkah to Google Calendar */}
           <div className="text-center mt-8 sm:mt-10">
@@ -680,7 +713,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
               onClick={addNikahToCalendar}
-              className="cal-btn-wrapper inline-flex items-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
+              className="cal-btn-wrapper inline-flex items-center justify-center gap-3 px-8 sm:px-10 py-3.5 sm:py-4 bg-[#2c3e38] hover:bg-[#1a2522] text-white rounded-full text-xs uppercase tracking-[0.2em] font-bold shadow-xl hover:shadow-2xl transition-all border border-white/20 cursor-pointer group"
             >
               <div className="w-6 h-6 rounded-full bg-[#d8406b] flex items-center justify-center text-white group-hover:rotate-12 transition-transform">
                 <Calendar size={13} />
@@ -864,14 +897,14 @@ https://ajmalrifa-invitation.vercel.app/`;
               <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
                 <button
                   onClick={openMapsDirections}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#2c3e38] hover:bg-[#1a2522] text-white text-xs uppercase tracking-wider font-semibold shadow-md hover:shadow-lg transition-all border border-[#c5a059]/40 cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#2c3e38] hover:bg-[#1a2522] text-white text-xs uppercase tracking-wider font-semibold shadow-md hover:shadow-lg transition-all border border-[#c5a059]/40 cursor-pointer whitespace-nowrap"
                 >
                   <Navigation size={13} className="text-[#c5a059] shrink-0" />
                   <span>Get Directions</span>
                 </button>
                 <button
                   onClick={handleCopyAddress}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-[#fcfbf9] text-[#2c3e38] text-xs uppercase tracking-wider font-semibold border border-[#c5a059]/35 shadow-xs hover:shadow-sm transition-all cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-[#fcfbf9] text-[#2c3e38] text-xs uppercase tracking-wider font-semibold border border-[#c5a059]/35 shadow-xs hover:shadow-sm transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Copy size={13} className="text-[#d8406b] shrink-0" />
                   <span>Copy Address</span>
