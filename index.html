@@ -21,6 +21,41 @@
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
+  <!-- Background Audio Player: Initialized as early as practical during page load -->
+  <audio
+    id="bg-music"
+    src="/audio/dheema.mp4"
+    loop
+    preload="auto"
+    playsinline
+    style="display: none;"
+  ></audio>
+  <script>
+    (function () {
+      const audio = document.getElementById("bg-music");
+      if (!audio) return;
+      const tryPlay = () => {
+        const p = audio.play();
+        if (p !== undefined) {
+          p.then(() => removeInteractionListeners()).catch(() => {});
+        }
+      };
+      const onUserInteraction = () => {
+        tryPlay();
+      };
+      const interactionEvents = ["pointerdown", "touchstart", "click", "keydown", "wheel", "scroll"];
+      const removeInteractionListeners = () => {
+        interactionEvents.forEach((evt) => {
+          window.removeEventListener(evt, onUserInteraction);
+        });
+      };
+      interactionEvents.forEach((evt) => {
+        window.addEventListener(evt, onUserInteraction, { once: true, passive: true });
+      });
+      tryPlay();
+    })();
+  </script>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

@@ -85,13 +85,15 @@ function CalendarPageFlip({ value, label }) {
 }
 
 export default function App() {
-  // Query params
-  const [params] = useState(() => new URLSearchParams(window.location.search));
-  const shouldAutoScroll = params.get("autoscroll") === "true";
-
   // State
-  const [isPlayingMusic, setIsPlayingMusic] = useState(false);
-  const [isAutoScrolling, setIsAutoScrolling] = useState(shouldAutoScroll);
+  const [isPlayingMusic, setIsPlayingMusic] = useState(() => {
+    if (typeof document !== "undefined") {
+      const audio = document.getElementById("bg-music");
+      return Boolean(audio && !audio.paused);
+    }
+    return false;
+  });
+  const [isAutoScrolling] = useState(true);
   const [autoScrollSpeed] = useState(1.5);
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -167,8 +169,9 @@ export default function App() {
 
   // Music controls
   const playAudio = useCallback(() => {
-    if (!htmlAudioRef.current) return;
-    htmlAudioRef.current
+    const audio = htmlAudioRef.current || document.getElementById("bg-music");
+    if (!audio) return;
+    audio
       .play()
       .then(() => {
         setIsPlayingMusic(true);
@@ -180,8 +183,9 @@ export default function App() {
   }, []);
 
   const pauseAudio = useCallback(() => {
-    if (!htmlAudioRef.current) return;
-    htmlAudioRef.current.pause();
+    const audio = htmlAudioRef.current || document.getElementById("bg-music");
+    if (!audio) return;
+    audio.pause();
     setIsPlayingMusic(false);
   }, []);
 
@@ -193,75 +197,114 @@ export default function App() {
     }
   };
 
-  // Attempt autoplay on mount with fallback to first user interaction
+  // Sync background audio player initialized in index.html
   useEffect(() => {
-    const audio = htmlAudioRef.current;
+    const audio = document.getElementById("bg-music");
     if (!audio) return;
+    htmlAudioRef.current = audio;
 
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsPlayingMusic(true);
-        })
-        .catch((err) => {
-          console.log("Autoplay was prevented by browser policy:", err);
-          setIsPlayingMusic(false);
+    const onPlay = () => setIsPlayingMusic(true);
+    const onPause = () => setIsPlayingMusic(false);
+    const onError = (e) => {
+      console.warn("Audio playback error:", e);
+      setIsPlayingMusic(false);
+    };
 
-          const startOnFirstInteraction = () => {
-            if (audio && audio.paused) {
-              audio
-                .play()
-                .then(() => {
-                  setIsPlayingMusic(true);
-                })
-                .catch(() => {});
-            }
-          };
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("error", onError);
 
-          window.addEventListener("click", startOnFirstInteraction, { once: true, passive: true });
-          window.addEventListener("touchstart", startOnFirstInteraction, { once: true, passive: true });
-        });
+    // Attempt playback promptly when permitted if paused
+    if (audio.paused) {
+      audio
+        .play()
+        .then(() => setIsPlayingMusic(true))
+        .catch(() => { });
     }
+
+    const startOnInteraction = () => {
+      if (audio.paused) {
+        audio
+          .play()
+          .then(() => setIsPlayingMusic(true))
+          .catch(() => { });
+      }
+    };
+
+    const interactionEvents = ["pointerdown", "touchstart", "click", "keydown", "wheel", "scroll"];
+    interactionEvents.forEach((evt) => {
+      window.addEventListener(evt, startOnInteraction, { once: true, passive: true });
+    });
+
+    return () => {
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("error", onError);
+      interactionEvents.forEach((evt) => {
+        window.removeEventListener(evt, startOnInteraction);
+      });
+    };
   }, []);
 
-  // Autoscroll functionality
+  // Autoscroll functionality - always enabled by default on page load
   useEffect(() => {
-    if (!isAutoScrolling) {
-      if (scrollIntervalRef.current) {
-        clearInterval(scrollIntervalRef.current);
-        scrollIntervalRef.current = null;
-      }
-      return;
+    let resumeTimeout = null;
+
+    const startAutoScroll = () => {
+      if (scrollIntervalRef.current) return;
+      scrollIntervalRef.current = setInterval(() => {
+        // Stop scrolling when reaching the end of content
+        if (
+          window.innerHeight + window.scrollY >=
+          document.documentElement.scrollHeight - 50
+        ) {
+          if (scrollIntervalRef.current) {
+            clearInterval(scrollIntervalRef.current);
+            scrollIntervalRef.current = null;
+          }
+          return;
+        }
+        window.scrollBy({ top: autoScrollSpeed, behavior: "smooth" });
+      }, 40);
+    };
+
+    if (isAutoScrolling) {
+      startAutoScroll();
     }
 
-    const interval = setInterval(() => {
-      window.scrollBy({ top: autoScrollSpeed, behavior: "smooth" });
-      if (
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 50
-      ) {
-        setIsAutoScrolling(false);
-        clearInterval(interval);
-      }
-    }, 40);
-
-    scrollIntervalRef.current = interval;
-
-    // Pause on user manual scroll/wheel
+    // Pause on user manual scroll/wheel/touch to preserve normal manual interaction
     const handleUserScroll = (e) => {
       if (e.isTrusted) {
-        setIsAutoScrolling(false);
+        if (scrollIntervalRef.current) {
+          clearInterval(scrollIntervalRef.current);
+          scrollIntervalRef.current = null;
+        }
+        if (resumeTimeout) clearTimeout(resumeTimeout);
+        // Resume auto-scroll when manual user interaction ceases, if not at page bottom
+        resumeTimeout = setTimeout(() => {
+          if (
+            window.innerHeight + window.scrollY <
+            document.documentElement.scrollHeight - 50
+          ) {
+            startAutoScroll();
+          }
+        }, 1500);
       }
     };
 
     window.addEventListener("wheel", handleUserScroll, { passive: true });
     window.addEventListener("touchstart", handleUserScroll, { passive: true });
+    window.addEventListener("touchmove", handleUserScroll, { passive: true });
 
     return () => {
-      clearInterval(interval);
+      if (scrollIntervalRef.current) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+      if (resumeTimeout) clearTimeout(resumeTimeout);
       window.removeEventListener("wheel", handleUserScroll);
       window.removeEventListener("touchstart", handleUserScroll);
+      window.removeEventListener("touchmove", handleUserScroll);
     };
   }, [isAutoScrolling, autoScrollSpeed]);
 
@@ -390,28 +433,6 @@ https://ajmalrifa-invitation.vercel.app/`;
 
   return (
     <div className="min-h-screen bg-[#fcfbf9] text-[#2c3e38] font-['Playfair_Display',serif] selection:bg-[#d8406b]/20 selection:text-[#d8406b] relative overflow-x-hidden">
-      {/* Background Audio Player (dheema.mp4 audio track) */}
-      <audio
-        ref={htmlAudioRef}
-        src="/audio/dheema.mp4"
-        loop
-        preload="auto"
-        playsInline
-        onPlay={() => setIsPlayingMusic(true)}
-        onPause={() => setIsPlayingMusic(false)}
-        onEnded={() => {
-          if (htmlAudioRef.current) {
-            htmlAudioRef.current.currentTime = 0;
-            htmlAudioRef.current.play().catch(() => {});
-          }
-        }}
-        onError={(e) => {
-          console.warn("Audio playback error:", e);
-          setIsPlayingMusic(false);
-        }}
-        style={{ display: "none" }}
-      />
-
       {/* Floating Music Audio Toggle Button */}
       <div className="fixed top-6 right-6 z-50">
         <button
@@ -451,7 +472,7 @@ https://ajmalrifa-invitation.vercel.app/`;
           <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-[#fcfbf9]/95 md:from-[#fcfbf9]/40 via-[#fcfbf9]/60 md:via-transparent to-transparent" />
         </motion.div>
 
-        {/* Hero Title & Names Overlay */}
+        {/* Hero Title Overlay */}
         <div className="absolute inset-0 z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col justify-center items-center md:items-end">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -464,18 +485,11 @@ https://ajmalrifa-invitation.vercel.app/`;
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight text-[#d8406b] drop-shadow-sm md:drop-shadow-none"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="hero-nikkah-title text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight drop-shadow-sm md:drop-shadow-none"
+              style={{ fontFamily: "'Playfair Display', serif", color: "#00ab41" }}
             >
               Nikkah
             </motion.h1>
-
-            {/* Ajmal Ahamed & Rifa */}
-            <div className="flex flex-col items-center md:items-end mt-3 sm:mt-4 w-full">
-              <span className="font-['Playfair_Display',serif] text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-tight text-[#2c3e38] font-bold">
-                Ajmal Ahamed &amp; Rifa
-              </span>
-            </div>
           </motion.div>
         </div>
 
@@ -515,7 +529,10 @@ https://ajmalrifa-invitation.vercel.app/`;
                 Wedding Invitation
               </h2>
 
-              <p className="text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]">
+              <p
+                className="text-justify text-[#5a6b65] font-light leading-relaxed text-base sm:text-lg pt-1 font-['Playfair_Display',serif]"
+                style={{ textAlign: "justify" }}
+              >
                 {weddingData.invitationMessage}
               </p>
             </motion.div>
@@ -749,7 +766,7 @@ https://ajmalrifa-invitation.vercel.app/`;
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-['Cormorant_Garamond',serif] font-bold tracking-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#2c3e38] font-['Cormorant_Garamond',serif] font-bold">
               Program of Wedding Celebrations
             </h2>
 
