@@ -13145,23 +13145,19 @@ body {
 }
 
 /* ==========================================================================
-   HERO SECTION: NIKKAH HEADING POSITIONING (LEAF GREEN & RIGHT SHIFT)
+   HERO SECTION: NIKKAH HEADING POSITIONING (CENTER ON MOBILE, RIGHT SHIFT ON DESKTOP)
    ========================================================================== */
 .hero-nikkah-title {
   position: relative;
-  left: 20px;
-  color: #4d6416;
-}
-
-@media (min-width: 640px) {
-  .hero-nikkah-title {
-    left: 28px;
-  }
+  left: 0;
+  text-align: center;
+  color: #2c3e38;
 }
 
 @media (min-width: 768px) {
   .hero-nikkah-title {
     left: 40px;
+    text-align: right;
   }
 }
 

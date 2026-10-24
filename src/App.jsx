@@ -485,8 +485,8 @@ https://ajmalrifa-invitation.vercel.app/`;
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.5 }}
-              className="hero-nikkah-title text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight drop-shadow-sm md:drop-shadow-none"
-              style={{ fontFamily: "'Playfair Display', serif", color: "#00ab41" }}
+              className="hero-nikkah-title text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-tight drop-shadow-sm md:drop-shadow-none text-center md:text-right"
+              style={{ fontFamily: "'Playfair Display', serif", color: "#2c3e38" }}
             >
               Nikkah
             </motion.h1>
