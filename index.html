@@ -18,6 +18,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
+  <!-- Preload Background Audio for Instant Zero-Delay Playback -->
+  <link rel="preload" href="/audio/dheema.mp4" as="audio" type="audio/mp4" />
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
@@ -39,11 +41,26 @@
       audio.loop = true;
       audio.volume = 1.0;
 
-      const userGestureEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown", "mousedown", "scroll", "wheel", "mousemove"];
+      const userGestureEvents = [
+        "pointerdown",
+        "pointerup",
+        "touchstart",
+        "touchend",
+        "touchmove",
+        "click",
+        "keydown",
+        "mousedown",
+        "mouseup",
+        "scroll",
+        "wheel",
+        "mousemove"
+      ];
 
       const startAudio = function () {
+        if (!audio) return;
+        audio.muted = false;
+        audio.volume = 1.0;
         if (audio.paused) {
-          audio.muted = false;
           const p = audio.play();
           if (p !== undefined) {
             p.then(function () {
@@ -68,9 +85,21 @@
       });
 
       audio.addEventListener("playing", cleanup, { once: true });
+      audio.addEventListener("canplay", startAudio, { once: true });
+      audio.addEventListener("canplaythrough", startAudio, { once: true });
+      audio.addEventListener("loadeddata", startAudio, { once: true });
 
-      // Immediate attempt on page load
+      // Immediate attempt on script execution & all lifecycle events
       startAudio();
+      document.addEventListener("DOMContentLoaded", startAudio);
+      window.addEventListener("load", startAudio);
+      window.addEventListener("pageshow", startAudio);
+      document.addEventListener("visibilitychange", function () {
+        if (!document.hidden && audio.paused) startAudio();
+      });
+      window.addEventListener("focus", function () {
+        if (audio.paused) startAudio();
+      });
     })();
   </script>
 

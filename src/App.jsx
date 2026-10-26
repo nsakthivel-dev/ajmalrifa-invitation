@@ -164,24 +164,33 @@ export default function App() {
     if (!audio) return;
     audio.muted = false;
     audio.loop = true;
+    audio.volume = 1.0;
 
     const startAudio = () => {
+      if (!audio) return;
+      audio.muted = false;
+      audio.volume = 1.0;
       if (audio.paused) {
-        audio.muted = false;
         audio.play().catch(() => {});
       }
     };
 
     // Attempt playback immediately when website opens
     startAudio();
+    audio.addEventListener("canplay", startAudio, { once: true });
+    audio.addEventListener("canplaythrough", startAudio, { once: true });
+    audio.addEventListener("loadeddata", startAudio, { once: true });
 
     const userGestureEvents = [
       "pointerdown",
+      "pointerup",
       "touchstart",
       "touchend",
+      "touchmove",
       "click",
       "keydown",
       "mousedown",
+      "mouseup",
       "scroll",
       "wheel",
       "mousemove",
