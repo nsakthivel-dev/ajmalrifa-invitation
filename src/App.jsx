@@ -4,7 +4,6 @@ import {
   Calendar,
   MapPin,
   Heart,
-  VolumeX,
   ChevronDown,
   Sparkles,
   Clock,
@@ -86,13 +85,6 @@ function CalendarPageFlip({ value, label }) {
 
 export default function App() {
   // State
-  const [isPlayingMusic, setIsPlayingMusic] = useState(() => {
-    if (typeof document !== "undefined") {
-      const audio = document.getElementById("bg-music");
-      return Boolean(audio && !audio.paused);
-    }
-    return false;
-  });
   const [isAutoScrolling] = useState(true);
   const [autoScrollSpeed] = useState(1.5);
   const [toastMessage, setToastMessage] = useState(null);
@@ -158,7 +150,6 @@ export default function App() {
     seconds: 0
   });
 
-  const htmlAudioRef = useRef(null);
   const scrollIntervalRef = useRef(null);
 
   // Show Toast
@@ -167,102 +158,57 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Music controls
-  const playAudio = useCallback(() => {
-    const audio = htmlAudioRef.current || document.getElementById("bg-music");
-    if (!audio) return;
-    audio.muted = false;
-    audio.loop = true;
-    audio
-      .play()
-      .then(() => {
-        setIsPlayingMusic(true);
-      })
-      .catch((e) => {
-        console.log("Audio playback prevented:", e);
-        setIsPlayingMusic(false);
-      });
-  }, []);
-
-  const pauseAudio = useCallback(() => {
-    const audio = htmlAudioRef.current || document.getElementById("bg-music");
-    if (!audio) return;
-    audio.pause();
-    setIsPlayingMusic(false);
-  }, []);
-
-  const toggleMusic = () => {
-    if (isPlayingMusic) {
-      pauseAudio();
-    } else {
-      playAudio();
-    }
-  };
-
-  // Sync background audio player initialized in index.html
+  // Background music autoplay & seamless looping (no on/off switch)
   useEffect(() => {
     const audio = document.getElementById("bg-music");
     if (!audio) return;
-    htmlAudioRef.current = audio;
     audio.muted = false;
     audio.loop = true;
 
-    const onPlay = () => setIsPlayingMusic(true);
-    const onPause = () => setIsPlayingMusic(false);
-    const onError = (e) => {
-      console.warn("Audio playback error:", e);
-      setIsPlayingMusic(false);
-    };
-
-    audio.addEventListener("play", onPlay);
-    audio.addEventListener("pause", onPause);
-    audio.addEventListener("playing", onPlay);
-    audio.addEventListener("error", onError);
-
-    // Initial check
-    if (!audio.paused) {
-      setIsPlayingMusic(true);
-    } else {
-      audio.muted = false;
-      audio
-        .play()
-        .then(() => setIsPlayingMusic(true))
-        .catch(() => { });
-    }
-
-    const userGestureEvents = ["pointerdown", "touchstart", "touchend", "click", "keydown", "mousedown"];
-    const startOnInteraction = () => {
+    const startAudio = () => {
       if (audio.paused) {
         audio.muted = false;
-        audio
-          .play()
-          .then(() => {
-            setIsPlayingMusic(true);
-            removeInteractionListeners();
-          })
-          .catch(() => { });
-      } else {
+        audio.play().catch(() => {});
+      }
+    };
+
+    // Attempt playback immediately when website opens
+    startAudio();
+
+    const userGestureEvents = [
+      "pointerdown",
+      "touchstart",
+      "touchend",
+      "click",
+      "keydown",
+      "mousedown",
+      "scroll",
+      "wheel",
+      "mousemove",
+    ];
+
+    const handleInteraction = () => {
+      startAudio();
+      if (!audio.paused) {
         removeInteractionListeners();
       }
     };
 
     const removeInteractionListeners = () => {
       userGestureEvents.forEach((evt) => {
-        window.removeEventListener(evt, startOnInteraction, true);
-        document.removeEventListener(evt, startOnInteraction, true);
+        window.removeEventListener(evt, handleInteraction, true);
+        document.removeEventListener(evt, handleInteraction, true);
       });
     };
 
     userGestureEvents.forEach((evt) => {
-      window.addEventListener(evt, startOnInteraction, { capture: true, passive: true });
-      document.addEventListener(evt, startOnInteraction, { capture: true, passive: true });
+      window.addEventListener(evt, handleInteraction, { capture: true, passive: true });
+      document.addEventListener(evt, handleInteraction, { capture: true, passive: true });
     });
 
+    audio.addEventListener("playing", removeInteractionListeners, { once: true });
+
     return () => {
-      audio.removeEventListener("play", onPlay);
-      audio.removeEventListener("pause", onPause);
-      audio.removeEventListener("playing", onPlay);
-      audio.removeEventListener("error", onError);
       removeInteractionListeners();
     };
   }, []);
@@ -454,25 +400,7 @@ https://ajmalrifa-invitation.vercel.app/`;
 
   return (
     <div className="min-h-screen bg-[#fcfbf9] text-[#2c3e38] font-['Playfair_Display',serif] selection:bg-[#d8406b]/20 selection:text-[#d8406b] relative overflow-x-hidden">
-      {/* Floating Music Audio Toggle Button */}
-      <div className="fixed top-6 right-6 z-50">
-        <button
-          onClick={toggleMusic}
-          aria-label={isPlayingMusic ? "Pause background music" : "Play background music"}
-          className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md border border-[#2c3e38]/10 shadow-lg flex items-center justify-center text-[#2c3e38] hover:scale-105 hover:bg-white transition-all cursor-pointer"
-        >
-          {isPlayingMusic ? (
-            <div className="flex gap-0.5 items-end justify-center h-4 w-4">
-              <span className="w-0.5 h-3 bg-[#d8406b] animate-pulse rounded-full" />
-              <span className="w-0.5 h-4 bg-[#d8406b] animate-pulse rounded-full delay-75" />
-              <span className="w-0.5 h-2 bg-[#d8406b] animate-pulse rounded-full delay-150" />
-              <span className="w-0.5 h-3.5 bg-[#d8406b] animate-pulse rounded-full delay-100" />
-            </div>
-          ) : (
-            <VolumeX size={18} className="text-[#2c3e38]/70" />
-          )}
-        </button>
-      </div>
+
 
 
 
