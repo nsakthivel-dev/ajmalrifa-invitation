@@ -18,15 +18,16 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
-  <!-- Preload Background Audio for Instant Zero-Delay Playback -->
-  <link rel="preload" href="/audio/audio.mp3" as="audio" type="audio/mpeg" />
+  <!-- Immediate Preload for Background Music -->
+  <link rel="preload" href="/audio/background.mp3" as="fetch" type="audio/mpeg" crossorigin="anonymous" />
+  <link rel="preload" href="/audio/background.mp3" as="audio" type="audio/mpeg" />
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
-  <!-- Background Audio Player: Single global instance, unmuted, continuous loop -->
+  <!-- Background Audio Element (Fallback for non-WebAudio browsers) -->
   <audio
     id="bg-music"
-    src="/audio/audio.mp3"
+    src="/audio/background.mp3"
     loop
     preload="auto"
     playsinline
@@ -35,16 +36,49 @@
   ></audio>
   <script>
     (function () {
-      var audio = document.getElementById("bg-music");
-      if (!audio) return;
+      // 0. Register Service Worker for Instant Audio & Asset Caching on Repeat Visits
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
+        });
+      }
 
-      audio.muted = false;
-      audio.defaultMuted = false;
-      audio.volume = 1.0;
-      audio.playbackRate = 1.0;
-      audio.loop = true;
+      // Performance measurement metrics
+      window.__audioMetrics = {
+        fetchStart: performance.now(),
+        fetchEnd: null,
+        decodeStart: null,
+        decodeEnd: null,
+        firstInteractionTime: null,
+        playbackStartTime: null,
+        playbackEngine: null,
+        downloadDurationMs: null,
+        decodeDurationMs: null,
+        interactionToPlaybackLatencyMs: null
+      };
 
+      var AUDIO_URL = "/audio/background.mp3";
+      var AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+      var ctx = null;
+      var audioBuffer = null;
+      var activeSource = null;
       var isPlaying = false;
+      var isFetchStarted = false;
+      var userGestureReceived = false;
+      var fallbackAudio = document.getElementById("bg-music");
+
+      if (fallbackAudio) {
+        fallbackAudio.muted = false;
+        fallbackAudio.defaultMuted = false;
+        fallbackAudio.volume = 1.0;
+        fallbackAudio.playbackRate = 1.0;
+        fallbackAudio.loop = true;
+        fallbackAudio.addEventListener("ended", function () {
+          fallbackAudio.currentTime = 0;
+          fallbackAudio.play().catch(function () {});
+        });
+      }
+
       var activationEvents = [
         "pointerdown",
         "touchstart",
@@ -60,68 +94,168 @@
         });
       }
 
-      function startPlayback() {
-        if (!audio) return;
-        if (!audio.paused) {
+      // Step 1: Immediate Audio Fetching & Advance Decoding via Web Audio API
+      function prepareAudio() {
+        if (isFetchStarted) return;
+        isFetchStarted = true;
+        window.__audioMetrics.fetchStart = performance.now();
+
+        fetch(AUDIO_URL)
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.arrayBuffer();
+          })
+          .then(function (arrayBuf) {
+            window.__audioMetrics.fetchEnd = performance.now();
+            window.__audioMetrics.downloadDurationMs = Math.round(
+              window.__audioMetrics.fetchEnd - window.__audioMetrics.fetchStart
+            );
+
+            if (!AudioCtxClass) return;
+            if (!ctx) {
+              try { ctx = new AudioCtxClass(); } catch (e) {}
+            }
+            if (!ctx) return;
+
+            window.__audioMetrics.decodeStart = performance.now();
+
+            return new Promise(function (resolve, reject) {
+              var decodePromise = ctx.decodeAudioData(arrayBuf, resolve, reject);
+              if (decodePromise && typeof decodePromise.then === "function") {
+                decodePromise.then(resolve).catch(reject);
+              }
+            });
+          })
+          .then(function (decoded) {
+            if (!decoded) return;
+            audioBuffer = decoded;
+            window.__audioMetrics.decodeEnd = performance.now();
+            window.__audioMetrics.decodeDurationMs = Math.round(
+              window.__audioMetrics.decodeEnd - window.__audioMetrics.decodeStart
+            );
+
+            // If user interaction was already received while decoding, start playback instantly
+            if (userGestureReceived && !isPlaying) {
+              startWebAudio();
+            }
+          })
+          .catch(function (err) {
+            console.warn("[Audio] Advance preparation notice:", err);
+          });
+      }
+
+      // Step 2: Web Audio Playback (Sub-millisecond latency when pre-decoded)
+      function startWebAudio() {
+        if (isPlaying || !audioBuffer || !ctx) return false;
+        try {
+          if (ctx.state === "suspended") {
+            ctx.resume();
+          }
+          var source = ctx.createBufferSource();
+          source.buffer = audioBuffer;
+          source.loop = true;
+          source.connect(ctx.destination);
+          source.start(0);
+          activeSource = source;
           isPlaying = true;
+
+          window.__audioMetrics.playbackStartTime = performance.now();
+          window.__audioMetrics.playbackEngine = "web-audio";
+          if (window.__audioMetrics.firstInteractionTime) {
+            window.__audioMetrics.interactionToPlaybackLatencyMs = Math.round(
+              window.__audioMetrics.playbackStartTime - window.__audioMetrics.firstInteractionTime
+            );
+          }
+
+          if (fallbackAudio) fallbackAudio.pause();
           removeActivationHandlers();
-          return;
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      // Step 3: HTMLAudioElement Fallback Playback
+      function startFallbackAudio() {
+        if (isPlaying || !fallbackAudio) return;
+        fallbackAudio.muted = false;
+        fallbackAudio.volume = 1.0;
+        fallbackAudio.playbackRate = 1.0;
+
+        var p = fallbackAudio.play();
+        if (p !== undefined) {
+          p.then(function () {
+            isPlaying = true;
+            window.__audioMetrics.playbackStartTime = performance.now();
+            window.__audioMetrics.playbackEngine = "html-audio";
+            if (window.__audioMetrics.firstInteractionTime) {
+              window.__audioMetrics.interactionToPlaybackLatencyMs = Math.round(
+                window.__audioMetrics.playbackStartTime - window.__audioMetrics.firstInteractionTime
+              );
+            }
+            removeActivationHandlers();
+          }).catch(function () {});
+        }
+      }
+
+      // Master activation coordinator
+      function triggerPlayback() {
+        if (isPlaying) return;
+
+        // Initialize AudioContext inside user activation context if not already done
+        if (AudioCtxClass && !ctx) {
+          try { ctx = new AudioCtxClass(); } catch (e) {}
+        }
+        if (ctx && ctx.state === "suspended") {
+          ctx.resume().catch(function () {});
+          // iOS Safari audio unlock
+          try {
+            var unlockBuffer = ctx.createBuffer(1, 1, 22050);
+            var unlockSource = ctx.createBufferSource();
+            unlockSource.buffer = unlockBuffer;
+            unlockSource.connect(ctx.destination);
+            unlockSource.start(0);
+          } catch (e) {}
         }
 
-        audio.muted = false;
-        audio.volume = 1.0;
-        audio.playbackRate = 1.0;
-
-        var playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(function () {
-              isPlaying = true;
-              removeActivationHandlers();
-            })
-            .catch(function () {
-              // Autoplay blocked by browser policy; user interaction will trigger playback
-            });
+        if (audioBuffer && ctx) {
+          startWebAudio();
+        } else {
+          // If buffer is still downloading/decoding or WebAudio is unavailable,
+          // trigger fallback audio so playback is not delayed
+          startFallbackAudio();
         }
       }
 
       function onFirstInteraction() {
-        startPlayback();
+        if (!window.__audioMetrics.firstInteractionTime) {
+          window.__audioMetrics.firstInteractionTime = performance.now();
+        }
+        userGestureReceived = true;
+        triggerPlayback();
       }
 
+      // Register non-passive capture listeners for immediate first-gesture response
       activationEvents.forEach(function (evt) {
         window.addEventListener(evt, onFirstInteraction, true);
         document.addEventListener(evt, onFirstInteraction, true);
       });
 
-      audio.addEventListener("ended", function () {
-        audio.currentTime = 0;
-        audio.play().catch(function () {});
-      });
+      window.playBackgroundMusic = triggerPlayback;
 
-      audio.addEventListener("playing", function () {
-        isPlaying = true;
-        removeActivationHandlers();
-      }, { once: true });
+      // Start prefetching and advance decoding immediately
+      prepareAudio();
 
-      window.playBackgroundMusic = startPlayback;
-
-      // 1. Attempt immediate audible autoplay on script execution
-      startPlayback();
-
-      // Lifecycle event attempts
-      document.addEventListener("DOMContentLoaded", startPlayback, { once: true });
-      window.addEventListener("load", startPlayback, { once: true });
-      window.addEventListener("pageshow", startPlayback);
+      // Attempt audible autoplay on load
+      triggerPlayback();
+      document.addEventListener("DOMContentLoaded", triggerPlayback, { once: true });
+      window.addEventListener("load", triggerPlayback, { once: true });
+      window.addEventListener("pageshow", triggerPlayback);
       document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && audio.paused) {
-          startPlayback();
-        }
+        if (!document.hidden && !isPlaying) triggerPlayback();
       });
       window.addEventListener("focus", function () {
-        if (audio.paused) {
-          startPlayback();
-        }
+        if (!isPlaying) triggerPlayback();
       });
     })();
   </script>
