@@ -104,7 +104,7 @@ export default function App() {
     venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
     polaroidCaption: "Ajmal Ahamed R & Rifa J",
-    musicUrl: "/audio/dheema.mp4",
+    musicUrl: "/audio/audio.mp4",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
       "“We cordially invite you to join us in celebrating the Nikkah of our beloved children. Your gracious presence, heartfelt duas, and blessings will make this blessed occasion even more meaningful and memorable for both our families.”",
@@ -176,10 +176,16 @@ export default function App() {
     };
 
     // Attempt playback immediately when website opens
-    startAudio();
+    if (audio.paused) {
+      startAudio();
+    }
     audio.addEventListener("canplay", startAudio, { once: true });
     audio.addEventListener("canplaythrough", startAudio, { once: true });
     audio.addEventListener("loadeddata", startAudio, { once: true });
+    audio.addEventListener("ended", () => {
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    });
 
     const userGestureEvents = [
       "pointerdown",
@@ -197,7 +203,9 @@ export default function App() {
     ];
 
     const handleInteraction = () => {
-      startAudio();
+      if (audio.paused) {
+        startAudio();
+      }
       if (!audio.paused) {
         removeInteractionListeners();
       }
@@ -519,7 +527,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 {/* Card 1: Ajmal Ahamed R */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
-                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2">
+                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
                     Ajmal Ahamed R
                   </div>
                 </div>
@@ -527,7 +535,7 @@ https://ajmalrifa-invitation.vercel.app/`;
                 {/* Card 2: Rifa J */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
-                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2">
+                  <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
                     Rifa J
                   </div>
                 </div>
@@ -958,7 +966,7 @@ https://ajmalrifa-invitation.vercel.app/`;
         <p className="text-[#5a6b65] text-xs font-medium tracking-[0.3em] uppercase">
           A Blessed Journey of Love &amp; Duas
         </p>
-        <p className="text-[#2c3e38]/60 text-sm mt-2 font-['Playfair_Display',serif]">
+        <p className="text-[#2c3e38]/60 text-sm mt-2 font-['Playfair_Display',serif] relative z-10">
           {weddingData.names} • 2026
         </p>
       </footer>
