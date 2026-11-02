@@ -91,10 +91,10 @@ export default function App() {
 
   // Wedding data
   const weddingData = {
-    names: "Ajmal Ahamed R & Rifa J",
-    groomName: "Ajmal Ahamed R",
+    names: "R. Ajmal Ahamed & J. Rifa",
+    groomName: "R. Ajmal Ahamed",
     groomResidence: "Pondicherry",
-    brideName: "Rifa J",
+    brideName: "J. Rifa",
     brideResidence: "Pondicherry",
     date: "Saturday, 26th December 2026",
     islamicDate: "17 Rajab 1448 AH",
@@ -103,7 +103,7 @@ export default function App() {
     location: "Pondicherry",
     venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
-    polaroidCaption: "Ajmal Ahamed R & Rifa J",
+    polaroidCaption: "R. Ajmal Ahamed & J. Rifa",
     musicUrl: "/audio/audio.mp4",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
@@ -328,7 +328,7 @@ export default function App() {
 
   // Add Nikkah to Google Calendar (Saturday, 26 December 2026, 5:00 PM to 6:00 PM IST)
   const addNikahToCalendar = () => {
-    const title = encodeURIComponent("The Nikkah Ceremony: Ajmal Ahamed R & Rifa J");
+    const title = encodeURIComponent("The Nikkah Ceremony: R. Ajmal Ahamed & J. Rifa");
     const details = encodeURIComponent(
       "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikkah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santho Lawn, Pondicherry"
     );
@@ -341,7 +341,7 @@ export default function App() {
 
   // Add specific event to calendar
   const addEventToCalendar = (event) => {
-    const title = encodeURIComponent(`${event.title} - Ajmal Ahamed R & Rifa J`);
+    const title = encodeURIComponent(`${event.title} - R. Ajmal Ahamed & J. Rifa`);
     const details = encodeURIComponent(
       `${event.details}\n\nVenue: Santho Lawn, Pondicherry`
     );
@@ -362,7 +362,7 @@ export default function App() {
 We invite you to join us as we begin a beautiful new chapter of our lives. Your presence, prayers, and blessings would make our special day even more memorable. ✨
 
 With love ❤️,
-*Ajmal Ahamed R & Rifa J*
+*R. Ajmal Ahamed & J. Rifa*
 
 💌 Our Wedding Invitation:
 https://ajmalrifa-invitation.vercel.app/`;
@@ -524,19 +524,19 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               {/* Original Individual Name Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-2 w-full">
-                {/* Card 1: Ajmal Ahamed R */}
+                {/* Card 1: R. Ajmal Ahamed */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
                   <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
-                    Ajmal Ahamed R
+                    R. Ajmal Ahamed
                   </div>
                 </div>
 
-                {/* Card 2: Rifa J */}
+                {/* Card 2: J. Rifa */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
                   <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
-                    Rifa J
+                    J. Rifa
                   </div>
                 </div>
               </div>
