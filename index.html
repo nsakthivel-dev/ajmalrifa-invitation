@@ -19,12 +19,11 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
   <!-- Preload Background Audio for Instant Zero-Delay Playback -->
-    <link rel="preload" href="/audio/audio.mp3" as="audio" type="audio/mpeg" />
-  <link rel="preload" href="/audio/audio.mp4" as="audio" type="audio/mp4" />
+  <link rel="preload" href="/audio/audio.mp3" as="audio" type="audio/mpeg" />
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
-  <!-- Background Audio Player: Auto plays unmuted & loops seamlessly -->
+  <!-- Background Audio Player: Single global instance, unmuted, continuous loop -->
   <audio
     id="bg-music"
     src="/audio/audio.mp3"
@@ -33,24 +32,20 @@
     playsinline
     webkit-playsinline="true"
     style="display: none;"
-  >
-    <source src="/audio/audio.mp3" type="audio/mpeg" />
-    <source src="/audio/audio.mp4" type="audio/mp4" />
-  </audio>
+  ></audio>
   <script>
     (function () {
-      const audio = document.getElementById("bg-music");
+      var audio = document.getElementById("bg-music");
       if (!audio) return;
+
       audio.muted = false;
-      audio.loop = true;
+      audio.defaultMuted = false;
       audio.volume = 1.0;
+      audio.playbackRate = 1.0;
+      audio.loop = true;
 
-      let isStarting = false;
-
-      // Only listen to discrete user gestures that grant audio playback permission.
-      // Do NOT listen to touchmove, mousemove, or scroll, as they fire at 60-120Hz
-      // and cause rapid-fire play() calls resulting in audio stutter on mobile hardware.
-      const gestureEvents = [
+      var isPlaying = false;
+      var activationEvents = [
         "pointerdown",
         "touchstart",
         "touchend",
@@ -58,60 +53,75 @@
         "keydown"
       ];
 
-      function cleanupListeners() {
-        gestureEvents.forEach(function (evt) {
-          window.removeEventListener(evt, handleGesture, true);
-          document.removeEventListener(evt, handleGesture, true);
+      function removeActivationHandlers() {
+        activationEvents.forEach(function (evt) {
+          window.removeEventListener(evt, onFirstInteraction, true);
+          document.removeEventListener(evt, onFirstInteraction, true);
         });
       }
 
-      function startAudio() {
-        if (!audio || !audio.paused || isStarting) return;
+      function startPlayback() {
+        if (!audio) return;
+        if (!audio.paused) {
+          isPlaying = true;
+          removeActivationHandlers();
+          return;
+        }
+
         audio.muted = false;
         audio.volume = 1.0;
-        isStarting = true;
+        audio.playbackRate = 1.0;
 
-        const playPromise = audio.play();
+        var playPromise = audio.play();
         if (playPromise !== undefined) {
           playPromise
             .then(function () {
-              isStarting = false;
-              cleanupListeners();
+              isPlaying = true;
+              removeActivationHandlers();
             })
             .catch(function () {
-              isStarting = false;
+              // Autoplay blocked by browser policy; user interaction will trigger playback
             });
-        } else {
-          isStarting = false;
         }
       }
 
-      function handleGesture() {
-        cleanupListeners();
-        startAudio();
+      function onFirstInteraction() {
+        startPlayback();
       }
 
-      gestureEvents.forEach(function (evt) {
-        window.addEventListener(evt, handleGesture, { capture: true, passive: true });
-        document.addEventListener(evt, handleGesture, { capture: true, passive: true });
+      activationEvents.forEach(function (evt) {
+        window.addEventListener(evt, onFirstInteraction, true);
+        document.addEventListener(evt, onFirstInteraction, true);
       });
 
-      audio.addEventListener("playing", cleanupListeners, { once: true });
       audio.addEventListener("ended", function () {
         audio.currentTime = 0;
         audio.play().catch(function () {});
       });
 
-      // Immediate attempt on script execution & browser lifecycle events
-      startAudio();
-      document.addEventListener("DOMContentLoaded", startAudio, { once: true });
-      window.addEventListener("load", startAudio, { once: true });
-      window.addEventListener("pageshow", startAudio);
+      audio.addEventListener("playing", function () {
+        isPlaying = true;
+        removeActivationHandlers();
+      }, { once: true });
+
+      window.playBackgroundMusic = startPlayback;
+
+      // 1. Attempt immediate audible autoplay on script execution
+      startPlayback();
+
+      // Lifecycle event attempts
+      document.addEventListener("DOMContentLoaded", startPlayback, { once: true });
+      window.addEventListener("load", startPlayback, { once: true });
+      window.addEventListener("pageshow", startPlayback);
       document.addEventListener("visibilitychange", function () {
-        if (!document.hidden && audio.paused) startAudio();
+        if (!document.hidden && audio.paused) {
+          startPlayback();
+        }
       });
       window.addEventListener("focus", function () {
-        if (audio.paused) startAudio();
+        if (audio.paused) {
+          startPlayback();
+        }
       });
     })();
   </script>

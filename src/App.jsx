@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Calendar,
-  MapPin,
-  Heart,
+    Heart,
   ChevronDown,
   Sparkles,
   Clock,
@@ -158,72 +157,14 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Background music autoplay & seamless looping (no on/off switch)
+  // Background music coordinator - delegates to global controller, prevents duplicate instances
   useEffect(() => {
-    const audio = document.getElementById("bg-music");
-    if (!audio) return;
-    audio.muted = false;
-    audio.loop = true;
-    audio.volume = 1.0;
-
-    let isStarting = false;
-
-    const startAudio = () => {
-      if (!audio || !audio.paused || isStarting) return;
-      audio.muted = false;
-      audio.volume = 1.0;
-      isStarting = true;
-      audio
-        .play()
-        .then(() => {
-          isStarting = false;
-          removeListeners();
-        })
-        .catch(() => {
-          isStarting = false;
-        });
-    };
-
-    // If audio is already playing from index.html, don't re-trigger or attach duplicate listeners
-    if (!audio.paused) {
-      return;
+    if (typeof window.playBackgroundMusic === "function") {
+      window.playBackgroundMusic();
     }
-
-    startAudio();
-
-    const gestureEvents = [
-      "pointerdown",
-      "touchstart",
-      "touchend",
-      "click",
-      "keydown",
-    ];
-
-    const handleInteraction = () => {
-      removeListeners();
-      startAudio();
-    };
-
-    const removeListeners = () => {
-      gestureEvents.forEach((evt) => {
-        window.removeEventListener(evt, handleInteraction, true);
-        document.removeEventListener(evt, handleInteraction, true);
-      });
-    };
-
-    gestureEvents.forEach((evt) => {
-      window.addEventListener(evt, handleInteraction, { capture: true, passive: true });
-      document.addEventListener(evt, handleInteraction, { capture: true, passive: true });
-    });
-
-    audio.addEventListener("playing", removeListeners, { once: true });
-
-    return () => {
-      removeListeners();
-    };
   }, []);
 
-  // Autoscroll functionality - always enabled by default on page load
+    // Autoscroll functionality - always enabled by default on page load
   useEffect(() => {
     let resumeTimeout = null;
 
