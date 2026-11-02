@@ -19,6 +19,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
   <!-- Preload Background Audio for Instant Zero-Delay Playback -->
+    <link rel="preload" href="/audio/audio.mp3" as="audio" type="audio/mpeg" />
   <link rel="preload" href="/audio/audio.mp4" as="audio" type="audio/mp4" />
 </head>
 
@@ -26,13 +27,16 @@
   <!-- Background Audio Player: Auto plays unmuted & loops seamlessly -->
   <audio
     id="bg-music"
-    src="/audio/audio.mp4"
-    autoplay
+    src="/audio/audio.mp3"
     loop
     preload="auto"
     playsinline
+    webkit-playsinline="true"
     style="display: none;"
-  ></audio>
+  >
+    <source src="/audio/audio.mp3" type="audio/mpeg" />
+    <source src="/audio/audio.mp4" type="audio/mp4" />
+  </audio>
   <script>
     (function () {
       const audio = document.getElementById("bg-music");
@@ -40,64 +44,68 @@
       audio.muted = false;
       audio.loop = true;
       audio.volume = 1.0;
-      audio.load();
 
-      const userGestureEvents = [
+      let isStarting = false;
+
+      // Only listen to discrete user gestures that grant audio playback permission.
+      // Do NOT listen to touchmove, mousemove, or scroll, as they fire at 60-120Hz
+      // and cause rapid-fire play() calls resulting in audio stutter on mobile hardware.
+      const gestureEvents = [
         "pointerdown",
-        "pointerup",
         "touchstart",
         "touchend",
-        "touchmove",
         "click",
-        "keydown",
-        "mousedown",
-        "mouseup",
-        "scroll",
-        "wheel",
-        "mousemove"
+        "keydown"
       ];
 
-      const startAudio = function () {
-        if (!audio) return;
-        audio.muted = false;
-        audio.volume = 1.0;
-        if (audio.paused) {
-          const p = audio.play();
-          if (p !== undefined) {
-            p.then(function () {
-              cleanup();
-            }).catch(function () {});
-          }
-        } else {
-          cleanup();
-        }
-      };
-
-      function cleanup() {
-        userGestureEvents.forEach(function (evt) {
-          window.removeEventListener(evt, startAudio, true);
-          document.removeEventListener(evt, startAudio, true);
+      function cleanupListeners() {
+        gestureEvents.forEach(function (evt) {
+          window.removeEventListener(evt, handleGesture, true);
+          document.removeEventListener(evt, handleGesture, true);
         });
       }
 
-      userGestureEvents.forEach(function (evt) {
-        window.addEventListener(evt, startAudio, { capture: true, passive: true });
-        document.addEventListener(evt, startAudio, { capture: true, passive: true });
+      function startAudio() {
+        if (!audio || !audio.paused || isStarting) return;
+        audio.muted = false;
+        audio.volume = 1.0;
+        isStarting = true;
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(function () {
+              isStarting = false;
+              cleanupListeners();
+            })
+            .catch(function () {
+              isStarting = false;
+            });
+        } else {
+          isStarting = false;
+        }
+      }
+
+      function handleGesture() {
+        cleanupListeners();
+        startAudio();
+      }
+
+      gestureEvents.forEach(function (evt) {
+        window.addEventListener(evt, handleGesture, { capture: true, passive: true });
+        document.addEventListener(evt, handleGesture, { capture: true, passive: true });
       });
 
-      audio.addEventListener("playing", cleanup, { once: true });
-      audio.addEventListener("canplay", startAudio, { once: true });
-      audio.addEventListener("canplaythrough", startAudio, { once: true });
-      audio.addEventListener("loadeddata", startAudio, { once: true });
+      audio.addEventListener("playing", cleanupListeners, { once: true });
       audio.addEventListener("ended", function () {
         audio.currentTime = 0;
         audio.play().catch(function () {});
       });
 
-      // Immediate attempt on script execution & all lifecycle events
+      // Immediate attempt on script execution & browser lifecycle events
       startAudio();
-      document.addEventListener("DOMContentLoaded", startAudio);
-      window.addEventListener("load", startAudio);
+      document.addEventListener("DOMContentLoaded", startAudio, { once: true });
+      window.addEventListener("load", startAudio, { once: true });
       window.addEventListener("pageshow", startAudio);
       document.addEventListener("visibilitychange", function () {
         if (!document.hidden && audio.paused) startAudio();

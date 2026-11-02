@@ -104,7 +104,7 @@ export default function App() {
     venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
     polaroidCaption: "R Ajmal Ahamed & J Rifa",
-    musicUrl: "/audio/audio.mp4",
+    musicUrl: "/audio/audio.mp3",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
       "“We cordially invite you to join us in celebrating the Nikkah of our beloved children. Your gracious presence, heartfelt duas, and blessings will make this blessed occasion even more meaningful and memorable for both our families.”",
@@ -165,69 +165,61 @@ export default function App() {
     audio.muted = false;
     audio.loop = true;
     audio.volume = 1.0;
-    audio.load();
+
+    let isStarting = false;
 
     const startAudio = () => {
-      if (!audio) return;
+      if (!audio || !audio.paused || isStarting) return;
       audio.muted = false;
       audio.volume = 1.0;
-      if (audio.paused) {
-        audio.play().catch(() => {});
-      }
+      isStarting = true;
+      audio
+        .play()
+        .then(() => {
+          isStarting = false;
+          removeListeners();
+        })
+        .catch(() => {
+          isStarting = false;
+        });
     };
 
-    // Attempt playback immediately when website opens
-    if (audio.paused) {
-      startAudio();
+    // If audio is already playing from index.html, don't re-trigger or attach duplicate listeners
+    if (!audio.paused) {
+      return;
     }
-    audio.addEventListener("canplay", startAudio, { once: true });
-    audio.addEventListener("canplaythrough", startAudio, { once: true });
-    audio.addEventListener("loadeddata", startAudio, { once: true });
-    audio.addEventListener("ended", () => {
-      audio.currentTime = 0;
-      audio.play().catch(() => {});
-    });
 
-    const userGestureEvents = [
+    startAudio();
+
+    const gestureEvents = [
       "pointerdown",
-      "pointerup",
       "touchstart",
       "touchend",
-      "touchmove",
       "click",
       "keydown",
-      "mousedown",
-      "mouseup",
-      "scroll",
-      "wheel",
-      "mousemove",
     ];
 
     const handleInteraction = () => {
-      if (audio.paused) {
-        startAudio();
-      }
-      if (!audio.paused) {
-        removeInteractionListeners();
-      }
+      removeListeners();
+      startAudio();
     };
 
-    const removeInteractionListeners = () => {
-      userGestureEvents.forEach((evt) => {
+    const removeListeners = () => {
+      gestureEvents.forEach((evt) => {
         window.removeEventListener(evt, handleInteraction, true);
         document.removeEventListener(evt, handleInteraction, true);
       });
     };
 
-    userGestureEvents.forEach((evt) => {
+    gestureEvents.forEach((evt) => {
       window.addEventListener(evt, handleInteraction, { capture: true, passive: true });
       document.addEventListener(evt, handleInteraction, { capture: true, passive: true });
     });
 
-    audio.addEventListener("playing", removeInteractionListeners, { once: true });
+    audio.addEventListener("playing", removeListeners, { once: true });
 
     return () => {
-      removeInteractionListeners();
+      removeListeners();
     };
   }, []);
 
