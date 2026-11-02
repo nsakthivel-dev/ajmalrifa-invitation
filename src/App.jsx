@@ -91,10 +91,10 @@ export default function App() {
 
   // Wedding data
   const weddingData = {
-    names: "R. Ajmal Ahamed & J. Rifa",
-    groomName: "R. Ajmal Ahamed",
+    names: "R Ajmal Ahamed & J Rifa",
+    groomName: "R Ajmal Ahamed",
     groomResidence: "Pondicherry",
-    brideName: "J. Rifa",
+    brideName: "J Rifa",
     brideResidence: "Pondicherry",
     date: "Saturday, 26th December 2026",
     islamicDate: "17 Rajab 1448 AH",
@@ -103,7 +103,7 @@ export default function App() {
     location: "Pondicherry",
     venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
-    polaroidCaption: "R. Ajmal Ahamed & J. Rifa",
+    polaroidCaption: "R Ajmal Ahamed & J Rifa",
     musicUrl: "/audio/audio.mp4",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
@@ -165,6 +165,7 @@ export default function App() {
     audio.muted = false;
     audio.loop = true;
     audio.volume = 1.0;
+    audio.load();
 
     const startAudio = () => {
       if (!audio) return;
@@ -328,7 +329,7 @@ export default function App() {
 
   // Add Nikkah to Google Calendar (Saturday, 26 December 2026, 5:00 PM to 6:00 PM IST)
   const addNikahToCalendar = () => {
-    const title = encodeURIComponent("The Nikkah Ceremony: R. Ajmal Ahamed & J. Rifa");
+    const title = encodeURIComponent("The Nikkah Ceremony: R Ajmal Ahamed & J Rifa");
     const details = encodeURIComponent(
       "In sha Allah, to be solemnized in the gracious presence of family and loved ones.\n\nEvent: The Nikkah Ceremony\nDate: Saturday, 26th December 2026\nIslamic Date: 17 Rajab 1448 AH\nTime: 5:00 PM to 6:00 PM\nVenue: Santho Lawn, Pondicherry"
     );
@@ -341,7 +342,7 @@ export default function App() {
 
   // Add specific event to calendar
   const addEventToCalendar = (event) => {
-    const title = encodeURIComponent(`${event.title} - R. Ajmal Ahamed & J. Rifa`);
+    const title = encodeURIComponent(`${event.title} - R Ajmal Ahamed & J Rifa`);
     const details = encodeURIComponent(
       `${event.details}\n\nVenue: Santho Lawn, Pondicherry`
     );
@@ -362,7 +363,7 @@ export default function App() {
 We invite you to join us as we begin a beautiful new chapter of our lives. Your presence, prayers, and blessings would make our special day even more memorable. ✨
 
 With love ❤️,
-*R. Ajmal Ahamed & J. Rifa*
+*R Ajmal Ahamed & J Rifa*
 
 💌 Our Wedding Invitation:
 https://ajmalrifa-invitation.vercel.app/`;
@@ -524,19 +525,19 @@ https://ajmalrifa-invitation.vercel.app/`;
 
               {/* Original Individual Name Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-2 w-full">
-                {/* Card 1: R. Ajmal Ahamed */}
+                {/* Card 1: R Ajmal Ahamed */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
                   <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
-                    R. Ajmal Ahamed
+                    R Ajmal Ahamed
                   </div>
                 </div>
 
-                {/* Card 2: J. Rifa */}
+                {/* Card 2: J Rifa */}
                 <div className="bg-white/85 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-[#2c3e38]/10 shadow-[0_10px_30px_-15px_rgba(44,62,56,0.06)] hover:shadow-[0_15px_35px_-10px_rgba(216,64,107,0.12)] transition-all duration-300 relative text-center group flex flex-col items-center justify-center overflow-hidden">
                   <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-[2px] bg-gradient-to-r from-transparent via-[#d8406b]/40 to-transparent" />
                   <div className="text-xl sm:text-2xl text-[#2c3e38] font-['Playfair_Display',serif] font-bold italic tracking-tight py-2 relative z-10">
-                    J. Rifa
+                    J Rifa
                   </div>
                 </div>
               </div>
@@ -562,9 +563,7 @@ https://ajmalrifa-invitation.vercel.app/`;
             {/* Subtle Antique-Gold Hairline Flourish Divider */}
             <div className="flex items-center justify-center gap-3 pt-3">
               <span className="h-px w-12 sm:w-16 bg-gradient-to-r from-transparent via-[#c5a059]/40 to-[#c5a059]/60" />
-              <svg className="w-3.5 h-3.5 text-[#c5a059]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="#c5a059" fillOpacity="0.25" />
-              </svg>
+              <Heart className="w-3.5 h-3.5 text-[#d8406b] fill-[#d8406b]" />
               <span className="h-px w-12 sm:w-16 bg-gradient-to-l from-transparent via-[#c5a059]/40 to-[#c5a059]/60" />
             </div>
           </div>
