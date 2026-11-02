@@ -9,6 +9,8 @@ import {
   Copy,
   MessageCircle,
   Navigation,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 
 // Calendar Page Unit with realistic back-to-front shift animation & centered numbers
@@ -157,12 +159,44 @@ export default function App() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  // Background music coordinator - delegates to global controller, prevents duplicate instances
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
   useEffect(() => {
+    const updateAudioState = () => {
+      if (window.__bgMusic) {
+        setIsPlayingAudio(!window.__bgMusic.paused && !window.__bgMusic.muted);
+      }
+    };
+
+    window.onAudioStateChange = (playing) => {
+      setIsPlayingAudio(playing);
+    };
+
+    if (window.__bgMusic) {
+      window.__bgMusic.addEventListener("play", updateAudioState);
+      window.__bgMusic.addEventListener("pause", updateAudioState);
+      updateAudioState();
+    }
+
     if (typeof window.playBackgroundMusic === "function") {
       window.playBackgroundMusic();
     }
+
+    return () => {
+      if (window.__bgMusic) {
+        window.__bgMusic.removeEventListener("play", updateAudioState);
+        window.__bgMusic.removeEventListener("pause", updateAudioState);
+      }
+      window.onAudioStateChange = null;
+    };
   }, []);
+
+  const handleToggleSound = (e) => {
+    e.stopPropagation();
+    if (typeof window.toggleBackgroundMusic === "function") {
+      window.toggleBackgroundMusic();
+    }
+  };
 
     // Autoscroll functionality - always enabled by default on page load
   useEffect(() => {
@@ -904,6 +938,20 @@ https://ajmalrifa-invitation.vercel.app/`;
       </footer>
 
 
+
+      {/* Floating Sound Toggle */}
+      <button
+        onClick={handleToggleSound}
+        type="button"
+        aria-label={isPlayingAudio ? "Mute background music" : "Play background music"}
+        className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-[#2c3e38]/10 text-[#2c3e38] flex items-center justify-center hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none"
+      >
+        {isPlayingAudio ? (
+          <Volume2 className="w-5 h-5 text-[#d8406b] animate-pulse" />
+        ) : (
+          <VolumeX className="w-5 h-5 text-[#2c3e38]/50" />
+        )}
+      </button>
 
       {/* Toast Notification */}
       <AnimatePresence>
