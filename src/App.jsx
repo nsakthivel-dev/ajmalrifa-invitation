@@ -105,7 +105,7 @@ export default function App() {
     venueFull: "Santho Lawn, Pondicherry",
     polaroidImage: "/wedding/nithya_arun.png",
     polaroidCaption: "R Ajmal Ahamed & J Rifa",
-    musicUrl: "/audio/audio.mp3",
+    musicUrl: "/audio/music.mp4",
     subtitle: "With the Blessings of Allah",
     invitationMessage:
       "“We cordially invite you to join us in celebrating the Nikkah of our beloved children. Your gracious presence, heartfelt duas, and blessings will make this blessed occasion even more meaningful and memorable for both our families.”",

@@ -19,7 +19,7 @@
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600&family=Noto+Serif+Malayalam:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet" />
   <!-- Single Preload Hint for Background Music -->
-  <link rel="preload" href="/audio/background.mp3" as="audio" type="audio/mpeg">
+  <link rel="preload" href="/audio/music.mp4" as="audio" type="audio/mp4">
 </head>
 
 <body class="bg-[#fcfbf9] text-[#2c3e38] antialiased selection:bg-[#d8406b]/20 selection:text-[#d8406b]">
@@ -35,7 +35,7 @@
       };
 
       // Exactly one persistent HTMLAudioElement
-      const music = new Audio("/audio/background.mp3");
+      const music = new Audio("/audio/music.mp4");
       music.preload = "auto";
       music.loop = true;
       music.muted = false;
