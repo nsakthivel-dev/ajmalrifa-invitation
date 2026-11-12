@@ -333,7 +333,7 @@ With love ❤️,
 *R Ajmal Ahamed & J Rifa*
 
 💌 Our Wedding Invitation:
-https://ajmalrifa-invitation-gamma.vercel.app/`;
+https://ajmalrifa-invitation.netlify.app/`;
     window.open(
       `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
       "_blank"
@@ -342,7 +342,7 @@ https://ajmalrifa-invitation-gamma.vercel.app/`;
 
   // Copy Link to Clipboard
   const handleCopyLink = async () => {
-    const link = "https://ajmalrifa-invitation-gamma.vercel.app/";
+    const link = "https://ajmalrifa-invitation.netlify.app/";
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(link);
