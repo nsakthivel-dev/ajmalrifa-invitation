@@ -944,7 +944,7 @@ https://ajmalrifa-invitation.netlify.app/`;
         onClick={handleToggleSound}
         type="button"
         aria-label={isPlayingAudio ? "Mute background music" : "Play background music"}
-        className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-[#2c3e38]/10 text-[#2c3e38] flex items-center justify-center hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none"
+        className="fixed top-6 right-6 z-50 w-11 h-11 rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-[#2c3e38]/10 text-[#2c3e38] flex items-center justify-center hover:bg-white hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none"
       >
         {isPlayingAudio ? (
           <Volume2 className="w-5 h-5 text-[#d8406b] animate-pulse" />
